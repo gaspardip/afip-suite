@@ -479,6 +479,11 @@ namespace SiAp_Parser
                             if (settingsMgr.CurrentSettings.SalesPointAndVoucherNumberInTheSameColumn.Value)
                             {
                                 string[] numbers = excelReader.GetString((int)indexes["SalesPoint"]).Trim().Split('-');
+
+                                // There is no salespoiont for some reason... just use 1
+                                if (numbers.Length == 1)
+                                    numbers = new string[] { "1", numbers[0] };
+
                                 c.PuntoDeVenta = Convert.ToInt16(numbers[0]);
                                 c.Numero = Convert.ToInt32(numbers[1]);
                             }

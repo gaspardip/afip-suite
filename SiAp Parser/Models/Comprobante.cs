@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SiAp_Parser.Enums;
 using System.Text.RegularExpressions;
 
@@ -73,7 +74,8 @@ namespace SiAp_Parser.Models
                     string[] parts;
                     string finalTypeStr = string.Empty;
 
-                    parts = Regex.Replace(value, @"[,.-]", string.Empty).Split(' ');
+                    parts = Regex.Replace(value, @"([,.-]*)(?:Poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
+                    parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
                     switch (parts.Length)
                     {
