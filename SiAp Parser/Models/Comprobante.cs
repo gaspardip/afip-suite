@@ -211,8 +211,9 @@ namespace SiAp_Parser.Models
             get { return _numeroIdentificacionContratante; }
             set
             {
-                if (value == null)
+                if (string.IsNullOrEmpty(value))
                     return;
+
                 _numeroIdentificacionContratante = value.IndexOf('-') != -1 ? string.Concat(value.Split('-')) : value;
             }
         }
@@ -223,6 +224,7 @@ namespace SiAp_Parser.Models
             get { return _contratante; }
             set
             {
+                value = Regex.Replace(value, @"[^\u0000-\u007F]+", string.Empty);
                 _contratante = (value.Length <= 30 ? value : value.Substring(0, 30)).ToUpper();
             }
         }

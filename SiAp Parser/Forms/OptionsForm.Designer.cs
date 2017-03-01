@@ -36,6 +36,7 @@
             this.btnSaveOptions = new System.Windows.Forms.Button();
             this.cbShowResults = new System.Windows.Forms.CheckBox();
             this.cbAutoSaveLogs = new System.Windows.Forms.CheckBox();
+            this.cbGetMissingFields = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbSaveOptionsOnExit
@@ -125,12 +126,24 @@
             this.cbAutoSaveLogs.UseVisualStyleBackColor = true;
             this.cbAutoSaveLogs.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
             // 
+            // cbGetMissingFields
+            // 
+            this.cbGetMissingFields.AutoSize = true;
+            this.cbGetMissingFields.Location = new System.Drawing.Point(22, 184);
+            this.cbGetMissingFields.Name = "cbGetMissingFields";
+            this.cbGetMissingFields.Size = new System.Drawing.Size(356, 17);
+            this.cbGetMissingFields.TabIndex = 8;
+            this.cbGetMissingFields.Text = "Buscar y corregir razones sociales y CUITS faltantes automáticamente";
+            this.cbGetMissingFields.UseVisualStyleBackColor = true;
+            this.cbGetMissingFields.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(588, 305);
             this.Controls.Add(this.btnSaveOptions);
+            this.Controls.Add(this.cbGetMissingFields);
             this.Controls.Add(this.cbAutoSaveLogs);
             this.Controls.Add(this.cbShowResults);
             this.Controls.Add(this.cbSaveOptionsOnExit);
@@ -157,5 +170,6 @@
         private System.Windows.Forms.Button btnSaveOptions;
         private System.Windows.Forms.CheckBox cbShowResults;
         private System.Windows.Forms.CheckBox cbAutoSaveLogs;
+        private System.Windows.Forms.CheckBox cbGetMissingFields;
     }
 }

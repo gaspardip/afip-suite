@@ -32,6 +32,7 @@ namespace SiAp_Parser
             cbSaveOptionsOnExit.Checked = f.settingsMgr.CurrentSettings.SaveOnExit.Value;
             cbShowResults.Checked = f.settingsMgr.CurrentSettings.ShowResults.Value;
             cbAutoSaveLogs.Checked = f.settingsMgr.CurrentSettings.AutoSaveLogs.Value;
+            cbGetMissingFields.Checked = f.settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value;
         }
 
         private void cbSettings_CheckedChanged(object sender, EventArgs e)
@@ -68,6 +69,9 @@ namespace SiAp_Parser
                     break;
                 case "cbAutoSaveResults":
                     mainForm.settingsMgr.CurrentSettings.AutoSaveLogs.Value = cbIsChecked;
+                    break;
+                case "cbGetMissingFields":
+                    mainForm.settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value = cbIsChecked;
                     break;
             }
         }

@@ -102,6 +102,7 @@
             this.ayudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.instructivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.acercaDeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbAutodetectIndexes = new System.Windows.Forms.Button();
             this.tabCtrlSettings.SuspendLayout();
             this.tabIndexes.SuspendLayout();
             this.tabSpecificIndexes.SuspendLayout();
@@ -216,6 +217,7 @@
             // 
             this.tabIndexes.Controls.Add(this.tabSpecificIndexes);
             this.tabIndexes.Controls.Add(this.btnLoadIndexes);
+            this.tabIndexes.Controls.Add(this.cbAutodetectIndexes);
             this.tabIndexes.Controls.Add(this.btnSaveIndexes);
             this.tabIndexes.Controls.Add(this.gbAliquotsIndexes);
             this.tabIndexes.Controls.Add(this.gbGeneralIndexes);
@@ -440,9 +442,9 @@
             // 
             // btnLoadIndexes
             // 
-            this.btnLoadIndexes.Location = new System.Drawing.Point(423, 226);
+            this.btnLoadIndexes.Location = new System.Drawing.Point(423, 334);
             this.btnLoadIndexes.Name = "btnLoadIndexes";
-            this.btnLoadIndexes.Size = new System.Drawing.Size(101, 270);
+            this.btnLoadIndexes.Size = new System.Drawing.Size(101, 162);
             this.btnLoadIndexes.TabIndex = 4;
             this.btnLoadIndexes.Text = "Cargar Índices";
             this.btnLoadIndexes.UseVisualStyleBackColor = true;
@@ -450,9 +452,9 @@
             // 
             // btnSaveIndexes
             // 
-            this.btnSaveIndexes.Location = new System.Drawing.Point(423, 15);
+            this.btnSaveIndexes.Location = new System.Drawing.Point(423, 142);
             this.btnSaveIndexes.Name = "btnSaveIndexes";
-            this.btnSaveIndexes.Size = new System.Drawing.Size(101, 202);
+            this.btnSaveIndexes.Size = new System.Drawing.Size(101, 186);
             this.btnSaveIndexes.TabIndex = 4;
             this.btnSaveIndexes.Text = "Guardar\r Índices";
             this.btnSaveIndexes.UseVisualStyleBackColor = true;
@@ -860,11 +862,21 @@
             this.acercaDeToolStripMenuItem.Text = "Acerca de...";
             this.acercaDeToolStripMenuItem.Click += new System.EventHandler(this.acercaDeToolStripMenuItem_Click);
             // 
+            // cbAutodetectIndexes
+            // 
+            this.cbAutodetectIndexes.Location = new System.Drawing.Point(423, 14);
+            this.cbAutodetectIndexes.Name = "cbAutodetectIndexes";
+            this.cbAutodetectIndexes.Size = new System.Drawing.Size(101, 122);
+            this.cbAutodetectIndexes.TabIndex = 4;
+            this.cbAutodetectIndexes.Text = "Autodetectar índices";
+            this.cbAutodetectIndexes.UseVisualStyleBackColor = true;
+            this.cbAutodetectIndexes.Click += new System.EventHandler(this.cbAutodetectIndexes_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(581, 711);
+            this.ClientSize = new System.Drawing.Size(581, 713);
             this.Controls.Add(this.msMainMenu);
             this.Controls.Add(this.tabCtrlSettings);
             this.Controls.Add(this.label3);
@@ -1000,6 +1012,7 @@
         private System.Windows.Forms.CheckBox cbInternalTaxes;
         private System.Windows.Forms.NumericUpDown nudInternalTaxes;
         private System.Windows.Forms.ToolStripMenuItem instructivoToolStripMenuItem;
+        private System.Windows.Forms.Button cbAutodetectIndexes;
     }
 }
 

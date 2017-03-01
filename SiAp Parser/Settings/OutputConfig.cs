@@ -19,6 +19,7 @@ namespace SiAp_Parser.Settings
         }
 
         public string Directory { get; set; }
+
         private string _fileName;
         public string FileName
         {

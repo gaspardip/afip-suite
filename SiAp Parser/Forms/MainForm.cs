@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 using SiAp_Parser.Settings;
 using SiAp_Parser.Extensions;
 using SiAp_Parser.Helpers;
@@ -89,9 +90,7 @@ namespace SiAp_Parser
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (settingsMgr.HasUnsavedChanges && !settingsMgr.CurrentSettings.SaveOnExit.Value)
-            {
                 e.Cancel = MessageBox.Show("Tiene cambios sin guardar. ¿Está seguro que quiere salir?", "Alerta", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No;
-            }
         }
 
         private void btnSelectPath_Click(object sender, EventArgs e)
@@ -417,14 +416,7 @@ namespace SiAp_Parser
             // http://stackoverflow.com/questions/21849756/excel-data-reader-issues-column-names-and-sheet-selection
             try
             {
-                var stream = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-                string ext = Path.GetExtension(txtFilepath.Text);
-
-                IExcelDataReader excelReader =
-                    ext == ".xls" ?
-                    ExcelReaderFactory.CreateBinaryReader(stream) :
-                    ExcelReaderFactory.CreateOpenXmlReader(stream);
+                var excelReader = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).GetExcelDataReader();
 
                 while (excelReader.Read())
                 {
@@ -438,6 +430,7 @@ namespace SiAp_Parser
                     if (isValidRow)
                     {
                         dynamic c = null;
+                        Persona p = null;
 
                         switch (settingsMgr.CurrentBookType)
                         {
@@ -500,9 +493,53 @@ namespace SiAp_Parser
                         }
 
                         if (indexes.ContainsKey("SellerName"))
-                            c.Contratante = Regex.Replace(excelReader.GetString((int)indexes["SellerName"]).Trim(), @"[^\u0000-\u007F]+", string.Empty);
+                        {
+                            try
+                            {
+                                c.Contratante = excelReader.GetString((int)indexes["SellerName"]).Trim();
+                            }
+                            catch
+                            {
+                                if (
+                                    string.IsNullOrEmpty(c.Contratante) &&
+                                    settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                    indexes.ContainsKey("SellerNumber"))
+                                {
+                                    c.NumeroIdentificacionContratante = excelReader.GetString((int)indexes["SellerNumber"]).Trim();
+
+                                    if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
+                                    {
+                                        p = (new CuitOnlineHelper(c.NumeroIdentificacionContratante)).GetInfo();
+
+                                        if (p != null)
+                                            c.Contratante = p.Denominacion;
+                                    }
+                                }
+                            }
+                        }
+
                         if (indexes.ContainsKey("SellerNumber"))
-                            c.NumeroIdentificacionContratante = excelReader.GetString((int)indexes["SellerNumber"]).Trim();
+                        {
+                            if (c.NumeroIdentificacionContratante == "0")
+                            {
+                                try
+                                {
+                                    c.NumeroIdentificacionContratante = excelReader.GetString((int)indexes["SellerNumber"]).Trim();
+                                }
+                                catch
+                                {
+                                    if (
+                                        settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                        indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
+                                    {
+                                        p = (new CuitOnlineHelper(c.Contratante)).GetInfo();
+
+                                        if (p != null)
+                                            c.NumeroIdentificacionContratante = p.CUIT;
+                                    }
+                                }
+                            }
+                        }
 
                         if (indexes["Aliquots"].Count > 0)
                         {
@@ -586,6 +623,8 @@ namespace SiAp_Parser
                         }
                         else
                             c.CantidadAlicuotasIVA = (ushort)c.Alicuotas.Count;
+
+                        // Verificar si es nota de credito de cualquier tipo...
 
                         if (c.EsValido)
                             comprobantes.Add(c);
@@ -819,7 +858,6 @@ namespace SiAp_Parser
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                    throw;
                 }
                 finally
                 {
@@ -1187,6 +1225,87 @@ namespace SiAp_Parser
             };
 
             return dic;
+        }
+
+        private void cbAutodetectIndexes_Click(object sender, EventArgs e)
+        {
+            string input = 
+                Interaction.InputBox
+                (
+                    "Por favor ingrese el índice (basado en 0) de la fila en la que se encuetran las cabeceras de la tabla",
+                    "Atención",
+                    "0",
+                    -1,
+                    -1
+                );
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
+                return;
+
+            int headersIndex = int.Parse(input);
+
+            if (headersIndex < 0)
+                return;
+
+            input = 
+                Interaction.InputBox
+                (
+                    "Por favor ingrese la cantidad de columnas de la tabla",
+                    "Atención",
+                    "2",
+                    -1,
+                    -1
+                );
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
+                return;
+
+            int columnsAmount = int.Parse(input);
+
+            if (columnsAmount < 2)
+                return;
+
+            try
+            {
+                var excelReader = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).GetExcelDataReader();
+                var dic = new Dictionary<string, int>();
+
+                for (int i = 0; i <= headersIndex; i++)
+                    excelReader.Read();
+
+                for (int i = 0; i <= columnsAmount; i++)
+                {
+                    try
+                    {
+                        string lec = Regex.Replace(excelReader.GetString(i).ToLower(), @"[.%]", string.Empty).Trim();
+
+                        if (string.IsNullOrEmpty(lec) || string.IsNullOrWhiteSpace(lec))
+                            continue;
+
+                        if (lec.IndexOf("fecha") != -1)
+                            dic.Add("Date", i);
+                        else if (lec.IndexOf("tipo") != -1 || lec.IndexOf("tipo de comprobante") != -1)
+                            dic.Add("VoucherType", i);
+                        else if (lec.IndexOf("punto de venta") != -1)
+                            dic.Add("SalesPoint", i);
+                        else if (lec.IndexOf("número") != -1 || lec.IndexOf("numero") != -1 || lec.IndexOf("número de comprobante") != -1 || lec.IndexOf("número de factura") != -1)
+                            dic.Add("VoucherNumber", i);
+                        else if (lec.IndexOf("proveedor") != -1)
+                            dic.Add("SellerName", i);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+
+                if (cbDate.Checked)
+                    nudDate.Value = dic["Date"];
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

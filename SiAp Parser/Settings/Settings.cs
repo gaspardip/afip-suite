@@ -28,6 +28,7 @@ namespace SiAp_Parser.Settings
             OutputPath = new Setting<string>(string.Empty);
             AutoSaveLogs = new Setting<bool>(true);
             LastFileUsedPath = new Setting<string>(string.Empty);
+            GetMissingFieldsAutomatically = new Setting<bool>(true);
         }
 
         public override bool Equals(object obj)
@@ -47,7 +48,8 @@ namespace SiAp_Parser.Settings
                 (SaveOnExit.Value == s.SaveOnExit.Value) &&
                 (ShowResults.Value == s.ShowResults.Value) &&
                 (OutputPath.Value == s.OutputPath.Value) &&
-                (AutoSaveLogs.Value == s.AutoSaveLogs.Value);
+                (AutoSaveLogs.Value == s.AutoSaveLogs.Value) &&
+                (GetMissingFieldsAutomatically.Value == s.GetMissingFieldsAutomatically.Value);
         }
 
         public override int GetHashCode()
@@ -68,6 +70,7 @@ namespace SiAp_Parser.Settings
             sb.AppendLine(string.Format("SaveOnExit: {0}", SaveOnExit));
             sb.AppendLine(string.Format("ShowResults: {0}", ShowResults));
             sb.AppendLine(string.Format("OutputPath: {0}", OutputPath));
+            sb.AppendLine(string.Format("OutputPath: {0}", GetMissingFieldsAutomatically));
 
             return sb.ToString();
         }
@@ -94,5 +97,7 @@ namespace SiAp_Parser.Settings
         public Setting<string> OutputPath { get; set; }
         [XmlElement("lastFileUsedPath")]
         public Setting<string> LastFileUsedPath { get; set; }
+        [XmlElement("getMissingFieldsAutomatically")]
+        public Setting<bool> GetMissingFieldsAutomatically { get; set; }
     }
 }

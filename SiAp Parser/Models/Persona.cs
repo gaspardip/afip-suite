@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using SiAp_Parser.Enums;
+
+namespace SiAp_Parser.Models
+{
+    public class Persona
+    {
+        public Persona() { }
+
+        public Persona(string denominacion, string cuit)
+        {
+            Denominacion = denominacion;
+            CUIT = cuit;
+        }
+
+        private string _denominacion;
+        public string Denominacion
+        {
+            get { return _denominacion; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    return;
+
+                _denominacion = Regex.Replace(value, "SOCIEDAD ANONIMA", "S.A.", RegexOptions.IgnoreCase);
+            }
+        }
+        public string CUIT { get; set; }
+        public TipoPersona Tipo { get; set; }
+    }
+}

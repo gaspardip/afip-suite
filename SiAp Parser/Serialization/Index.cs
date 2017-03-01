@@ -29,12 +29,11 @@ namespace SiAp_Parser.Serialization
 
         [XmlIgnore]
         public static Index Default { get { return new Index(0, false); } }
-
         [XmlAttribute("enabled")]
         public bool Enabled { get; set; }
         [XmlText]
         public string Value { get; set; }
         [XmlIgnore]
-        public decimal Number { get { return Decimal.Parse(Value); } }
+        public decimal Number { get { return decimal.Parse(Value); } }
     }
 }
