@@ -74,7 +74,7 @@ namespace SiAp_Parser.Models
                     string[] parts;
                     string finalTypeStr = string.Empty;
 
-                    parts = Regex.Replace(value, @"([,.-]*)(?:Poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
+                    parts = Regex.Replace(value, @"([,.-]*)(?:[Pp]oliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
                     parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
                     switch (parts.Length)
@@ -82,10 +82,19 @@ namespace SiAp_Parser.Models
                         // FA
                         case 1:
                             // Fc
-                            if (parts[0].Length == 2)
-                                finalTypeStr = parts[0].Substring(0, 1) + "-" + "A";
-                            else
-                                finalTypeStr = parts[0].Substring(0, 1) + "-" + parts[0].Substring(1, 1);
+                            switch(parts[0].Length)
+                            {
+                                // Just A...
+                                case 1:
+                                    finalTypeStr = "FC-" + parts[0];
+                                    break;
+                                case 2:
+                                    finalTypeStr = parts[0].Substring(0, 1) + "-" + parts[0].Substring(1, 1);
+                                    break;
+                                case 3:
+                                    finalTypeStr = parts[0].Substring(0, 2) + "-" + parts[0].Substring(2, 1);
+                                    break;
+                            }
                             break;
                         // Factura A
                         case 2:
