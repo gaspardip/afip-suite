@@ -1,5 +1,4 @@
-﻿using Excel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -477,8 +476,14 @@ namespace SiAp_Parser
                                 if (numbers.Length == 1)
                                     numbers = new string[] { "1", numbers[0] };
 
-                                c.PuntoDeVenta = Convert.ToInt16(numbers[0]);
-                                c.Numero = Convert.ToInt32(numbers[1]);
+                                short salesPoint;
+                                int voucherNumber;
+
+                                Int16.TryParse(numbers[0], out salesPoint);
+                                c.PuntoDeVenta = salesPoint;
+
+                                Int32.TryParse(numbers[1], out voucherNumber);
+                                c.Numero = voucherNumber;
                             }
                             else
                             {
@@ -695,11 +700,13 @@ namespace SiAp_Parser
 
             if (settingsMgr.CurrentSettings.ShowResults.Value)
             {
+                int i = 0;
                 var resultsForm = new ResultsForm();
 
                 foreach (Comprobante c in comprobantes)
                 {
                     resultsForm.AddResultsRow(
+                        ++i,
                         c.Fecha.ToString("MM/dd/yyyy"),
                         c.Tipo,
                         c.PuntoDeVenta,
@@ -718,46 +725,55 @@ namespace SiAp_Parser
             {
                 var logs = GenerateLogFromVoucherList(comprobantes);
 
-                if (logs != null)
+                if (logs == null)
+                    return;
+
+                if (settingsMgr.CurrentSettings.AutoSaveLogs.Value)
                 {
-                    if (settingsMgr.CurrentSettings.AutoSaveLogs.Value)
+                    settingsMgr.OutputConfig.FileName = "vouchers.txt";
+                    settingsMgr.OutputConfig.FileName = "aliquots.txt";
+                    File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["aliquots"]["log"]);
+                }
+                else
+                {
+                    var sfd = new SaveFileDialog();
+
+                    sfd.Filter = settingsMgr.OutputConfig.DialogFilter;
+                    sfd.Title = settingsMgr.OutputConfig.VouchersSaveFileDialogTitle;
+                    sfd.InitialDirectory = settingsMgr.OutputConfig.Directory;
+                    sfd.FileName = string.Concat(settingsMgr.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", settingsMgr.OutputConfig.DefaultFileName, ".txt");
+
+                    if (sfd.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    try
                     {
-                        settingsMgr.OutputConfig.FileName = "vouchers.txt";
-                        settingsMgr.OutputConfig.FileName = "aliquots.txt";
+                        settingsMgr.OutputConfig.FileName = sfd.FileName;
+
+                        File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["vouchers"]["log"]);
+
+                        sfd.Title = settingsMgr.OutputConfig.AliquotsSaveFileDialogTitle;
+                        sfd.InitialDirectory = Directory.GetParent(sfd.FileName).FullName;
+                        sfd.FileName = string.Concat(settingsMgr.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", settingsMgr.OutputConfig.DefaultFileName, ".txt");
+
+                        if (sfd.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        settingsMgr.OutputConfig.FileName = sfd.FileName;
+
                         File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["aliquots"]["log"]);
+
+                        MessageBox.Show
+                        (
+                            string.Format("{0} comprobantes generados, {1} alicuotas generadas", logs["vouchers"]["amount"], logs["aliquots"]["amount"]),
+                            "Información",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        var sfd = new SaveFileDialog();
-                        sfd.Filter = settingsMgr.OutputConfig.DialogFilter;
-                        sfd.Title = settingsMgr.OutputConfig.VouchersSaveFileDialogTitle;
-                        sfd.InitialDirectory = settingsMgr.OutputConfig.Directory;
-                        sfd.FileName = string.Concat(settingsMgr.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", settingsMgr.OutputConfig.DefaultFileName, ".txt");
-
-                        if (sfd.ShowDialog() == DialogResult.OK)
-                        {
-                            settingsMgr.OutputConfig.FileName = sfd.FileName;
-
-                            File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["vouchers"]["log"]);
-
-                            sfd.Title = settingsMgr.OutputConfig.AliquotsSaveFileDialogTitle;
-                            sfd.FileName = string.Concat(settingsMgr.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", settingsMgr.OutputConfig.DefaultFileName, ".txt");
-
-                            if (sfd.ShowDialog() == DialogResult.OK)
-                            {
-                                settingsMgr.OutputConfig.FileName = sfd.FileName;
-
-                                File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["aliquots"]["log"]);
-
-                                MessageBox.Show
-                                (
-                                    string.Format("{0} comprobantes generados, {1} alicuotas generadas", logs["vouchers"]["amount"], logs["aliquots"]["amount"]),
-                                    "Información",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information
-                                );
-                            }
-                        }
+                        throw;
                     }
                 }
             }
@@ -1229,7 +1245,7 @@ namespace SiAp_Parser
 
         private void cbAutodetectIndexes_Click(object sender, EventArgs e)
         {
-            string input = 
+            string input =
                 Interaction.InputBox
                 (
                     "Por favor ingrese el índice (basado en 0) de la fila en la que se encuetran las cabeceras de la tabla",
@@ -1247,7 +1263,7 @@ namespace SiAp_Parser
             if (headersIndex < 0)
                 return;
 
-            input = 
+            input =
                 Interaction.InputBox
                 (
                     "Por favor ingrese la cantidad de columnas de la tabla",

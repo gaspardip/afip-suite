@@ -74,7 +74,7 @@ namespace SiAp_Parser.Models
                     string[] parts;
                     string finalTypeStr = string.Empty;
 
-                    parts = Regex.Replace(value, @"([,.-]*)(?:[Pp]oliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
+                    parts = Regex.Replace(value, @"([,.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
                     parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
                     switch (parts.Length)
@@ -116,6 +116,9 @@ namespace SiAp_Parser.Models
                         case 5:
                             finalTypeStr = parts[0].Substring(0, 1) + parts[2].Substring(0, 1) + parts[4].Substring(0, 1) + "-" + parts[5];
                             break;
+                        default:
+                            _tipo = TipoComprobante.OTROS_COMP_QUE_NO_CUMPLEN_CON_LA_R_G_1415_Y_SUS_MODIF;
+                            return;
                     }
 
                     finalTypeStr = finalTypeStr.ToUpper();
