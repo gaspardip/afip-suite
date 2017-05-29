@@ -118,6 +118,7 @@
     <Compile Include="Helpers\CuitOnlineHelper.cs" />
     <Compile Include="Helpers\ScrapingHelper.cs" />
     <Compile Include="Helpers\SerializationHelpers.cs" />
+    <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Models\AlicuotaCompra.cs" />
     <Compile Include="Models\AlicuotaVenta.cs" />
     <Compile Include="Models\Comprobante.cs" />
@@ -219,6 +220,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Exceptions\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

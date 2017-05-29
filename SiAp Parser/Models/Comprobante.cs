@@ -94,6 +94,9 @@ namespace SiAp_Parser.Models
                                 case 3:
                                     finalTypeStr = parts[0].Substring(0, 2) + "-" + parts[0].Substring(2, 1);
                                     break;
+                                default:
+                                    finalTypeStr = parts[0].Substring(0, 1);
+                                    break;
                             }
                             break;
                         // Factura A
@@ -125,6 +128,9 @@ namespace SiAp_Parser.Models
 
                     switch (finalTypeStr)
                     {
+                        case "T":
+                            _tipo = TipoComprobante.TIQUE;
+                            break;
                         case "F-A":
                         case "FC-A":
                             _tipo = TipoComprobante.FACTURAS_A;
@@ -226,7 +232,7 @@ namespace SiAp_Parser.Models
                 if (string.IsNullOrEmpty(value))
                     return;
 
-                _numeroIdentificacionContratante = value.IndexOf('-') != -1 ? string.Concat(value.Split('-')) : value;
+                _numeroIdentificacionContratante = Regex.Replace(value, @"[^\d]", string.Empty);
             }
         }
 

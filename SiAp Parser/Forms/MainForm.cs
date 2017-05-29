@@ -514,7 +514,7 @@ namespace SiAp_Parser
 
                                     if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
                                     {
-                                        p = (new CuitOnlineHelper(c.NumeroIdentificacionContratante)).GetInfo();
+                                        p = (new CuitOnlineHelper(c.NumeroIdentificacionContratante)).GetPersonInfo();
 
                                         if (p != null)
                                             c.Contratante = p.Denominacion;
@@ -530,6 +530,9 @@ namespace SiAp_Parser
                                 try
                                 {
                                     c.NumeroIdentificacionContratante = excelReader.GetString((int)indexes["SellerNumber"]).Trim();
+
+                                    if (!ValidationHelper.IsValidCUIT(c.NumeroIdentificacionContratante))
+                                        throw new ArgumentException("Un CUIT no tiene el formato correcto");
                                 }
                                 catch
                                 {
@@ -537,7 +540,7 @@ namespace SiAp_Parser
                                         settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value &&
                                         indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
                                     {
-                                        p = (new CuitOnlineHelper(c.Contratante)).GetInfo();
+                                        p = (new CuitOnlineHelper(c.Contratante)).GetPersonInfo();
 
                                         if (p != null)
                                             c.NumeroIdentificacionContratante = p.CUIT;
@@ -639,6 +642,11 @@ namespace SiAp_Parser
                 excelReader.Close();
             }
             #region Exceptions
+            catch(ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             #region PathTooLongException
             catch (PathTooLongException)
             {
@@ -938,12 +946,8 @@ namespace SiAp_Parser
                 return null;
 
             var indexes = Regex.Replace(txtBox.Text, @"\s+", string.Empty).Split(',');
-            var iList = new List<int>(indexes.Count());
 
-            foreach (var i in indexes)
-                iList.Add(int.Parse(i));
-
-            return iList;
+            return indexes.Select(n => int.Parse(n)).ToList();
         }
 
         private void RestoreIndexes(dynamic i)

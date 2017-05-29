@@ -13,19 +13,19 @@ namespace SiAp_Parser.Helpers
 
         }
 
-        public Persona GetInfo()
+        public Persona GetPersonInfo()
         {
             var hit = Document.DocumentNode.CssSelect("#searchResults .hit").First();
 
-            if (hit.HasChildNodes)
-                return new Persona
-                {
-                    Denominacion = hit.CssSelect("span.denominacion").First().InnerText,
-                    CUIT = hit.CssSelect(".cuit").First().InnerText,
-                    Tipo = hit.InnerText.IndexOf("Jurídica") != -1 ? TipoPersona.Juridica : TipoPersona.Fisica
-                };
-            else
+            if (!hit.HasChildNodes)
                 return null;
+
+            return new Persona
+            {
+                Denominacion = hit.CssSelect("span.denominacion").First().InnerText,
+                CUIT = hit.CssSelect(".cuit").First().InnerText,
+                Tipo = hit.InnerText.IndexOf("Jurídica") != -1 ? TipoPersona.Juridica : TipoPersona.Fisica
+            };
         }
     }
 }
