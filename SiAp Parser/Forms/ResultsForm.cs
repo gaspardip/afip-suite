@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SiAp_Parser
@@ -22,7 +23,7 @@ namespace SiAp_Parser
             for (int i = 0; i < dgvResults.Rows.Count; ++i)
             {
                 //c += Convert.ToInt32(dgvResults.Rows[i].Cells[1].Value);
-                t += Convert.ToDecimal(dgvResults.Rows[i].Cells[8].Value);
+                t += Convert.ToDecimal(dgvResults.Rows[i].Cells[dgvResults.Rows[i].Cells.Count - 1].Value);
             }
 
             lblTotalImport.Text = Math.Round(t, 2).ToString();

@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.dgvResults = new System.Windows.Forms.DataGridView();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblTotalImport = new System.Windows.Forms.Label();
+            this.rowNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VoucherType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SalesPoint = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -38,10 +43,6 @@
             this.UntaxedNet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GrossIncome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Total = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblTotalImport = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,6 +54,7 @@
             this.dgvResults.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.dgvResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvResults.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.rowNumber,
             this.Date,
             this.VoucherType,
             this.SalesPoint,
@@ -67,6 +69,50 @@
             this.dgvResults.ReadOnly = true;
             this.dgvResults.Size = new System.Drawing.Size(901, 265);
             this.dgvResults.TabIndex = 0;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(12, 299);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(113, 46);
+            this.btnExport.TabIndex = 1;
+            this.btnExport.Text = "Exportar";
+            this.btnExport.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(346, 299);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Importe total:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(284, 316);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(130, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Importe total crédito fiscal:";
+            // 
+            // lblTotalImport
+            // 
+            this.lblTotalImport.AutoSize = true;
+            this.lblTotalImport.Location = new System.Drawing.Point(420, 299);
+            this.lblTotalImport.Name = "lblTotalImport";
+            this.lblTotalImport.Size = new System.Drawing.Size(10, 13);
+            this.lblTotalImport.TabIndex = 4;
+            this.lblTotalImport.Text = "-";
+            // 
+            // rowNumber
+            // 
+            this.rowNumber.Frozen = true;
+            this.rowNumber.HeaderText = "#";
+            this.rowNumber.Name = "rowNumber";
+            this.rowNumber.ReadOnly = true;
+            this.rowNumber.Width = 39;
             // 
             // Date
             // 
@@ -149,42 +195,6 @@
             this.Total.ReadOnly = true;
             this.Total.Width = 56;
             // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(12, 299);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(113, 46);
-            this.btnExport.TabIndex = 1;
-            this.btnExport.Text = "Exportar";
-            this.btnExport.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(346, 299);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Importe total:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(284, 316);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(130, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Importe total crédito fiscal:";
-            // 
-            // lblTotalImport
-            // 
-            this.lblTotalImport.AutoSize = true;
-            this.lblTotalImport.Location = new System.Drawing.Point(420, 299);
-            this.lblTotalImport.Name = "lblTotalImport";
-            this.lblTotalImport.Size = new System.Drawing.Size(10, 13);
-            this.lblTotalImport.TabIndex = 4;
-            this.lblTotalImport.Text = "-";
-            // 
             // ResultsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -211,6 +221,8 @@
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblTotalImport;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rowNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn Date;
         private System.Windows.Forms.DataGridViewTextBoxColumn VoucherType;
         private System.Windows.Forms.DataGridViewTextBoxColumn SalesPoint;
@@ -220,6 +232,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn UntaxedNet;
         private System.Windows.Forms.DataGridViewTextBoxColumn GrossIncome;
         private System.Windows.Forms.DataGridViewTextBoxColumn Total;
-        private System.Windows.Forms.Label lblTotalImport;
     }
 }
