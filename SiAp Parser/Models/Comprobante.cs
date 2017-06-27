@@ -74,7 +74,7 @@ namespace SiAp_Parser.Models
                     string[] parts;
                     string finalTypeStr = string.Empty;
 
-                    parts = Regex.Replace(value, @"([,.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
+                    parts = Regex.Replace(value, @"(["",.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
                     parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
                     switch (parts.Length)
