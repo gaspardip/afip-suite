@@ -9,7 +9,7 @@ namespace SiAp_Parser.Extensions
     public static class DecimalExtensions
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -87,6 +87,6 @@ namespace SiAp_Parser.Extensions
         public static bool AlmostEquals(this decimal decimal1, decimal decimal2, int precision)
         {
             return (Math.Round(decimal1 - decimal2, precision) == 0);
-        } 
+        }
     }
 }

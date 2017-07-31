@@ -48,12 +48,8 @@ namespace SiAp_Parser.Models
             calculatedTotal += ImporteImpuestosInternos;
 
             if (Tipo != TipoComprobante.FACTURAS_C && Tipo != TipoComprobante.NOTAS_DE_CREDITO_C)
-            {
                 foreach (var a in Alicuotas)
-                {
                     calculatedTotal += a.ImporteNeto + a.ImpuestoLiquidado;
-                }
-            }
 
             return
                 ImporteTotal.AlmostEquals(calculatedTotal, 2) ||

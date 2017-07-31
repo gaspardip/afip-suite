@@ -470,9 +470,13 @@ namespace SiAp_Parser
                         {
                             if (settingsMgr.CurrentSettings.SalesPointAndVoucherNumberInTheSameColumn.Value)
                             {
-                                string[] numbers = excelReader.GetString((int)indexes["SalesPoint"]).Trim().Split('-');
+                                var strNumbers = excelReader.GetString((int)indexes["SalesPoint"]);
+                                var numbers = new string[] { "1", "1" };
 
-                                // There is no salespoiont for some reason... just use 1
+                                if(!string.IsNullOrEmpty(strNumbers))
+                                    numbers = strNumbers.Replace(" ", string.Empty).Split('-');
+
+                                // There is no salespoint for some reason... just use 1
                                 if (numbers.Length == 1)
                                     numbers = new string[] { "1", numbers[0] };
 
