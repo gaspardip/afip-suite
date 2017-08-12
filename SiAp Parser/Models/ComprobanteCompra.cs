@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using SiAp_Parser.Extensions;
 using SiAp_Parser.Enums;
 
@@ -90,9 +86,7 @@ namespace SiAp_Parser.Models
             var comprobanteStr = sb.ToString();
 
             if(comprobanteStr.Length != CANTIDAD_CARACTERES_COMPROBANTES_COMPRAS)
-            {
                 return string.Empty;
-            }
 
             return comprobanteStr;
         }

@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using System.IO;
 using SiAp_Parser.Enums;
 using SiAp_Parser.Helpers;
 using SiAp_Parser.Extensions;
-using System.Windows.Forms;
-using SiAp_Parser.Serialization;
 
 namespace SiAp_Parser.Settings
 {

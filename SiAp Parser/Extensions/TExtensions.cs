@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SiAp_Parser.Extensions
+﻿namespace SiAp_Parser.Extensions
 {
     public static class TExtensions
     {

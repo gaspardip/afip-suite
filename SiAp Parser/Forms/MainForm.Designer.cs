@@ -59,6 +59,7 @@
             this.nudUncategorizedPerceptionAmount = new System.Windows.Forms.NumericUpDown();
             this.nudPaymentExpireDate = new System.Windows.Forms.NumericUpDown();
             this.btnLoadIndexes = new System.Windows.Forms.Button();
+            this.cbAutodetectIndexes = new System.Windows.Forms.Button();
             this.btnSaveIndexes = new System.Windows.Forms.Button();
             this.gbAliquotsIndexes = new System.Windows.Forms.GroupBox();
             this.nudAliquot0 = new System.Windows.Forms.NumericUpDown();
@@ -102,7 +103,6 @@
             this.ayudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.instructivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.acercaDeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbAutodetectIndexes = new System.Windows.Forms.Button();
             this.tabCtrlSettings.SuspendLayout();
             this.tabIndexes.SuspendLayout();
             this.tabSpecificIndexes.SuspendLayout();
@@ -449,6 +449,16 @@
             this.btnLoadIndexes.Text = "Cargar Índices";
             this.btnLoadIndexes.UseVisualStyleBackColor = true;
             this.btnLoadIndexes.Click += new System.EventHandler(this.btnLoadIndexes_Click);
+            // 
+            // cbAutodetectIndexes
+            // 
+            this.cbAutodetectIndexes.Location = new System.Drawing.Point(423, 14);
+            this.cbAutodetectIndexes.Name = "cbAutodetectIndexes";
+            this.cbAutodetectIndexes.Size = new System.Drawing.Size(101, 122);
+            this.cbAutodetectIndexes.TabIndex = 4;
+            this.cbAutodetectIndexes.Text = "Autodetectar índices";
+            this.cbAutodetectIndexes.UseVisualStyleBackColor = true;
+            this.cbAutodetectIndexes.Click += new System.EventHandler(this.cbAutodetectIndexes_Click);
             // 
             // btnSaveIndexes
             // 
@@ -862,16 +872,6 @@
             this.acercaDeToolStripMenuItem.Text = "Acerca de...";
             this.acercaDeToolStripMenuItem.Click += new System.EventHandler(this.acercaDeToolStripMenuItem_Click);
             // 
-            // cbAutodetectIndexes
-            // 
-            this.cbAutodetectIndexes.Location = new System.Drawing.Point(423, 14);
-            this.cbAutodetectIndexes.Name = "cbAutodetectIndexes";
-            this.cbAutodetectIndexes.Size = new System.Drawing.Size(101, 122);
-            this.cbAutodetectIndexes.TabIndex = 4;
-            this.cbAutodetectIndexes.Text = "Autodetectar índices";
-            this.cbAutodetectIndexes.UseVisualStyleBackColor = true;
-            this.cbAutodetectIndexes.Click += new System.EventHandler(this.cbAutodetectIndexes_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -894,6 +894,7 @@
             this.Text = "SiAp Parser";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.tabCtrlSettings.ResumeLayout(false);
             this.tabIndexes.ResumeLayout(false);
             this.tabSpecificIndexes.ResumeLayout(false);

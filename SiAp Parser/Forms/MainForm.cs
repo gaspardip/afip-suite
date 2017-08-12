@@ -1331,5 +1331,10 @@ namespace SiAp_Parser
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using SiAp_Parser.Serialization;
 
 namespace SiAp_Parser.Settings
 {

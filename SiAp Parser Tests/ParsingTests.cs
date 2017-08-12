@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SiAp_Parser;
 using SiAp_Parser.Enums;
 
 namespace SiAp_Parser_Tests
