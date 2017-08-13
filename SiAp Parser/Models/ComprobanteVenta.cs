@@ -78,7 +78,7 @@ namespace SiAp_Parser.Models
             return comprobanteStr;
         }
 
-        #region Constants 
+        #region Constants
 
         private const ushort CANTIDAD_CARACTERES_COMPROBANTES_VENTAS = 266;
 
@@ -90,7 +90,7 @@ namespace SiAp_Parser.Models
 
         private bool VerificarValidez()
         {
-            decimal calculatedTotal = 0;
+            double calculatedTotal = 0;
 
             calculatedTotal += this.ImporteConceptosNoIntegranElNetoGravado;
             calculatedTotal += this.ImporteOperacionesExentas;
@@ -115,7 +115,7 @@ namespace SiAp_Parser.Models
         }
 
         public int NumeroHasta { get; set; }
-        public decimal ImportePercepcionNoCategorizados { get; set; }
+        public double ImportePercepcionNoCategorizados { get; set; }
         public DateTime FechaVencimientoPago { get; set; }
         public new List<AlicuotaVenta> Alicuotas { get; set; }
 

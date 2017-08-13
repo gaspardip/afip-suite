@@ -59,7 +59,7 @@ namespace SiAp_Parser.Settings
                 {
                     // log
                 }
-            }         
+            }
         }
 
         public bool Save()
@@ -107,6 +107,7 @@ namespace SiAp_Parser.Settings
                     // log
                     return false;
                 }
+
                 return !CurrentSettings.Equals(OldSettings);
             }
         }

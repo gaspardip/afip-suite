@@ -58,9 +58,9 @@
             this.nudVoucherNumberUntil = new System.Windows.Forms.NumericUpDown();
             this.nudUncategorizedPerceptionAmount = new System.Windows.Forms.NumericUpDown();
             this.nudPaymentExpireDate = new System.Windows.Forms.NumericUpDown();
-            this.btnLoadIndexes = new System.Windows.Forms.Button();
+            this.btnLoadDocumentOptions = new System.Windows.Forms.Button();
             this.cbAutodetectIndexes = new System.Windows.Forms.Button();
-            this.btnSaveIndexes = new System.Windows.Forms.Button();
+            this.btnSaveDocumentOptions = new System.Windows.Forms.Button();
             this.gbAliquotsIndexes = new System.Windows.Forms.GroupBox();
             this.nudAliquot0 = new System.Windows.Forms.NumericUpDown();
             this.nudAliquot27 = new System.Windows.Forms.NumericUpDown();
@@ -95,6 +95,8 @@
             this.nudSalesPoint = new System.Windows.Forms.NumericUpDown();
             this.nudTotal = new System.Windows.Forms.NumericUpDown();
             this.nudVoucherNumber = new System.Windows.Forms.NumericUpDown();
+            this.tabDocumentOptions = new System.Windows.Forms.TabPage();
+            this.cbSalesPointAndVoucherNumberInTheSameColumn = new System.Windows.Forms.CheckBox();
             this.msMainMenu = new System.Windows.Forms.MenuStrip();
             this.archivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nuevoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,6 +136,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudSalesPoint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTotal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVoucherNumber)).BeginInit();
+            this.tabDocumentOptions.SuspendLayout();
             this.msMainMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -206,6 +209,7 @@
             // tabCtrlSettings
             // 
             this.tabCtrlSettings.Controls.Add(this.tabIndexes);
+            this.tabCtrlSettings.Controls.Add(this.tabDocumentOptions);
             this.tabCtrlSettings.Location = new System.Drawing.Point(18, 109);
             this.tabCtrlSettings.Name = "tabCtrlSettings";
             this.tabCtrlSettings.SelectedIndex = 0;
@@ -216,9 +220,9 @@
             // tabIndexes
             // 
             this.tabIndexes.Controls.Add(this.tabSpecificIndexes);
-            this.tabIndexes.Controls.Add(this.btnLoadIndexes);
+            this.tabIndexes.Controls.Add(this.btnLoadDocumentOptions);
             this.tabIndexes.Controls.Add(this.cbAutodetectIndexes);
-            this.tabIndexes.Controls.Add(this.btnSaveIndexes);
+            this.tabIndexes.Controls.Add(this.btnSaveDocumentOptions);
             this.tabIndexes.Controls.Add(this.gbAliquotsIndexes);
             this.tabIndexes.Controls.Add(this.gbGeneralIndexes);
             this.tabIndexes.Location = new System.Drawing.Point(4, 22);
@@ -440,15 +444,15 @@
             this.nudPaymentExpireDate.Size = new System.Drawing.Size(40, 20);
             this.nudPaymentExpireDate.TabIndex = 0;
             // 
-            // btnLoadIndexes
+            // btnLoadDocumentOptions
             // 
-            this.btnLoadIndexes.Location = new System.Drawing.Point(423, 334);
-            this.btnLoadIndexes.Name = "btnLoadIndexes";
-            this.btnLoadIndexes.Size = new System.Drawing.Size(101, 162);
-            this.btnLoadIndexes.TabIndex = 4;
-            this.btnLoadIndexes.Text = "Cargar Índices";
-            this.btnLoadIndexes.UseVisualStyleBackColor = true;
-            this.btnLoadIndexes.Click += new System.EventHandler(this.btnLoadIndexes_Click);
+            this.btnLoadDocumentOptions.Location = new System.Drawing.Point(423, 334);
+            this.btnLoadDocumentOptions.Name = "btnLoadDocumentOptions";
+            this.btnLoadDocumentOptions.Size = new System.Drawing.Size(101, 162);
+            this.btnLoadDocumentOptions.TabIndex = 4;
+            this.btnLoadDocumentOptions.Text = "Cargar opciones";
+            this.btnLoadDocumentOptions.UseVisualStyleBackColor = true;
+            this.btnLoadDocumentOptions.Click += new System.EventHandler(this.btnLoadDocumentSettings_Click);
             // 
             // cbAutodetectIndexes
             // 
@@ -460,15 +464,15 @@
             this.cbAutodetectIndexes.UseVisualStyleBackColor = true;
             this.cbAutodetectIndexes.Click += new System.EventHandler(this.cbAutodetectIndexes_Click);
             // 
-            // btnSaveIndexes
+            // btnSaveDocumentOptions
             // 
-            this.btnSaveIndexes.Location = new System.Drawing.Point(423, 142);
-            this.btnSaveIndexes.Name = "btnSaveIndexes";
-            this.btnSaveIndexes.Size = new System.Drawing.Size(101, 186);
-            this.btnSaveIndexes.TabIndex = 4;
-            this.btnSaveIndexes.Text = "Guardar\r Índices";
-            this.btnSaveIndexes.UseVisualStyleBackColor = true;
-            this.btnSaveIndexes.Click += new System.EventHandler(this.btnSaveIndexes_Click);
+            this.btnSaveDocumentOptions.Location = new System.Drawing.Point(423, 142);
+            this.btnSaveDocumentOptions.Name = "btnSaveDocumentOptions";
+            this.btnSaveDocumentOptions.Size = new System.Drawing.Size(101, 186);
+            this.btnSaveDocumentOptions.TabIndex = 4;
+            this.btnSaveDocumentOptions.Text = "Guardar\r opciones";
+            this.btnSaveDocumentOptions.UseVisualStyleBackColor = true;
+            this.btnSaveDocumentOptions.Click += new System.EventHandler(this.btnSaveDocumentSettings_Click);
             // 
             // gbAliquotsIndexes
             // 
@@ -808,6 +812,27 @@
             this.nudVoucherNumber.Size = new System.Drawing.Size(40, 20);
             this.nudVoucherNumber.TabIndex = 0;
             // 
+            // tabDocumentOptions
+            // 
+            this.tabDocumentOptions.Controls.Add(this.cbSalesPointAndVoucherNumberInTheSameColumn);
+            this.tabDocumentOptions.Location = new System.Drawing.Point(4, 22);
+            this.tabDocumentOptions.Name = "tabDocumentOptions";
+            this.tabDocumentOptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDocumentOptions.Size = new System.Drawing.Size(539, 502);
+            this.tabDocumentOptions.TabIndex = 1;
+            this.tabDocumentOptions.Text = "Opciones del documento";
+            this.tabDocumentOptions.UseVisualStyleBackColor = true;
+            // 
+            // cbSalesPointAndVoucherNumberInTheSameColumn
+            // 
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.AutoSize = true;
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.Location = new System.Drawing.Point(15, 18);
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.Name = "cbSalesPointAndVoucherNumberInTheSameColumn";
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.Size = new System.Drawing.Size(402, 17);
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.TabIndex = 6;
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.Text = "El punto de venta y número de comprobante se encuentra en la misma columna";
+            this.cbSalesPointAndVoucherNumberInTheSameColumn.UseVisualStyleBackColor = true;
+            // 
             // msMainMenu
             // 
             this.msMainMenu.BackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -930,6 +955,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudSalesPoint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudTotal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVoucherNumber)).EndInit();
+            this.tabDocumentOptions.ResumeLayout(false);
+            this.tabDocumentOptions.PerformLayout();
             this.msMainMenu.ResumeLayout(false);
             this.msMainMenu.PerformLayout();
             this.ResumeLayout(false);
@@ -962,8 +989,8 @@
         private System.Windows.Forms.NumericUpDown nudAliquot21;
         private System.Windows.Forms.GroupBox gbGeneralIndexes;
         private System.Windows.Forms.TextBox txtGrossIncome;
-        private System.Windows.Forms.Button btnLoadIndexes;
-        private System.Windows.Forms.Button btnSaveIndexes;
+        private System.Windows.Forms.Button btnLoadDocumentOptions;
+        private System.Windows.Forms.Button btnSaveDocumentOptions;
         private System.Windows.Forms.NumericUpDown nudVATPerceptionsAmount;
         private System.Windows.Forms.CheckBox cbSellerName;
         private System.Windows.Forms.CheckBox cbVoucherNumber;
@@ -1014,6 +1041,8 @@
         private System.Windows.Forms.NumericUpDown nudInternalTaxes;
         private System.Windows.Forms.ToolStripMenuItem instructivoToolStripMenuItem;
         private System.Windows.Forms.Button cbAutodetectIndexes;
+        private System.Windows.Forms.TabPage tabDocumentOptions;
+        private System.Windows.Forms.CheckBox cbSalesPointAndVoucherNumberInTheSameColumn;
     }
 }
 

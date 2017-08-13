@@ -31,7 +31,6 @@
             this.cbSaveOptionsOnExit = new System.Windows.Forms.CheckBox();
             this.cbLoadLastPreferences = new System.Windows.Forms.CheckBox();
             this.cbGenerateVouchersNumbers = new System.Windows.Forms.CheckBox();
-            this.cbSalesPointAndVoucherNumberInTheSameColumn = new System.Windows.Forms.CheckBox();
             this.cbValidateRowBasedOnDate = new System.Windows.Forms.CheckBox();
             this.btnSaveOptions = new System.Windows.Forms.Button();
             this.cbShowResults = new System.Windows.Forms.CheckBox();
@@ -42,7 +41,7 @@
             // cbSaveOptionsOnExit
             // 
             this.cbSaveOptionsOnExit.AutoSize = true;
-            this.cbSaveOptionsOnExit.Location = new System.Drawing.Point(23, 115);
+            this.cbSaveOptionsOnExit.Location = new System.Drawing.Point(23, 92);
             this.cbSaveOptionsOnExit.Name = "cbSaveOptionsOnExit";
             this.cbSaveOptionsOnExit.Size = new System.Drawing.Size(303, 17);
             this.cbSaveOptionsOnExit.TabIndex = 8;
@@ -53,7 +52,7 @@
             // cbLoadLastPreferences
             // 
             this.cbLoadLastPreferences.AutoSize = true;
-            this.cbLoadLastPreferences.Location = new System.Drawing.Point(23, 91);
+            this.cbLoadLastPreferences.Location = new System.Drawing.Point(23, 68);
             this.cbLoadLastPreferences.Name = "cbLoadLastPreferences";
             this.cbLoadLastPreferences.Size = new System.Drawing.Size(298, 17);
             this.cbLoadLastPreferences.TabIndex = 7;
@@ -64,24 +63,13 @@
             // cbGenerateVouchersNumbers
             // 
             this.cbGenerateVouchersNumbers.AutoSize = true;
-            this.cbGenerateVouchersNumbers.Location = new System.Drawing.Point(22, 67);
+            this.cbGenerateVouchersNumbers.Location = new System.Drawing.Point(22, 44);
             this.cbGenerateVouchersNumbers.Name = "cbGenerateVouchersNumbers";
             this.cbGenerateVouchersNumbers.Size = new System.Drawing.Size(298, 17);
             this.cbGenerateVouchersNumbers.TabIndex = 4;
             this.cbGenerateVouchersNumbers.Text = "Generar números de comprobantes en caso de que falten";
             this.cbGenerateVouchersNumbers.UseVisualStyleBackColor = true;
             this.cbGenerateVouchersNumbers.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
-            // 
-            // cbSalesPointAndVoucherNumberInTheSameColumn
-            // 
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.AutoSize = true;
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.Location = new System.Drawing.Point(22, 44);
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.Name = "cbSalesPointAndVoucherNumberInTheSameColumn";
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.Size = new System.Drawing.Size(402, 17);
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.TabIndex = 5;
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.Text = "El punto de venta y número de comprobante se encuentra en la misma columna";
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.UseVisualStyleBackColor = true;
-            this.cbSalesPointAndVoucherNumberInTheSameColumn.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
             // 
             // cbValidateRowBasedOnDate
             // 
@@ -96,7 +84,7 @@
             // 
             // btnSaveOptions
             // 
-            this.btnSaveOptions.Location = new System.Drawing.Point(23, 231);
+            this.btnSaveOptions.Location = new System.Drawing.Point(23, 208);
             this.btnSaveOptions.Name = "btnSaveOptions";
             this.btnSaveOptions.Size = new System.Drawing.Size(553, 39);
             this.btnSaveOptions.TabIndex = 9;
@@ -107,7 +95,7 @@
             // cbShowResults
             // 
             this.cbShowResults.AutoSize = true;
-            this.cbShowResults.Location = new System.Drawing.Point(23, 138);
+            this.cbShowResults.Location = new System.Drawing.Point(23, 115);
             this.cbShowResults.Name = "cbShowResults";
             this.cbShowResults.Size = new System.Drawing.Size(268, 17);
             this.cbShowResults.TabIndex = 8;
@@ -118,7 +106,7 @@
             // cbAutoSaveLogs
             // 
             this.cbAutoSaveLogs.AutoSize = true;
-            this.cbAutoSaveLogs.Location = new System.Drawing.Point(22, 161);
+            this.cbAutoSaveLogs.Location = new System.Drawing.Point(22, 138);
             this.cbAutoSaveLogs.Name = "cbAutoSaveLogs";
             this.cbAutoSaveLogs.Size = new System.Drawing.Size(278, 17);
             this.cbAutoSaveLogs.TabIndex = 8;
@@ -129,7 +117,7 @@
             // cbGetMissingFields
             // 
             this.cbGetMissingFields.AutoSize = true;
-            this.cbGetMissingFields.Location = new System.Drawing.Point(22, 184);
+            this.cbGetMissingFields.Location = new System.Drawing.Point(22, 161);
             this.cbGetMissingFields.Name = "cbGetMissingFields";
             this.cbGetMissingFields.Size = new System.Drawing.Size(356, 17);
             this.cbGetMissingFields.TabIndex = 8;
@@ -141,7 +129,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 305);
+            this.ClientSize = new System.Drawing.Size(588, 267);
             this.Controls.Add(this.btnSaveOptions);
             this.Controls.Add(this.cbGetMissingFields);
             this.Controls.Add(this.cbAutoSaveLogs);
@@ -149,7 +137,6 @@
             this.Controls.Add(this.cbSaveOptionsOnExit);
             this.Controls.Add(this.cbLoadLastPreferences);
             this.Controls.Add(this.cbGenerateVouchersNumbers);
-            this.Controls.Add(this.cbSalesPointAndVoucherNumberInTheSameColumn);
             this.Controls.Add(this.cbValidateRowBasedOnDate);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "OptionsForm";
@@ -165,7 +152,6 @@
         private System.Windows.Forms.CheckBox cbSaveOptionsOnExit;
         private System.Windows.Forms.CheckBox cbLoadLastPreferences;
         private System.Windows.Forms.CheckBox cbGenerateVouchersNumbers;
-        private System.Windows.Forms.CheckBox cbSalesPointAndVoucherNumberInTheSameColumn;
         private System.Windows.Forms.CheckBox cbValidateRowBasedOnDate;
         private System.Windows.Forms.Button btnSaveOptions;
         private System.Windows.Forms.CheckBox cbShowResults;

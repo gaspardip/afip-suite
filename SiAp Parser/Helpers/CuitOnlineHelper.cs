@@ -15,9 +15,9 @@ namespace SiAp_Parser.Helpers
 
         public Persona GetPersonInfo()
         {
-            var hit = Document.DocumentNode.CssSelect("#searchResults .hit").First();
+            var hit = Document.DocumentNode.CssSelect("#searchResults .hit").FirstOrDefault();
 
-            if (!hit.HasChildNodes)
+            if (hit == null || !hit.HasChildNodes)
                 return null;
 
             return new Persona

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace SiAp_Parser
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// http://stackoverflow.com/questions/1665533/communicate-between-two-windows-forms-in-c-sharp
     public partial class OptionsForm : Form
@@ -18,7 +18,6 @@ namespace SiAp_Parser
             mainForm = f;
 
             cbValidateRowBasedOnDate.Checked = f.settingsMgr.CurrentSettings.ValidateRowsBasedOnDate.Value;
-            cbSalesPointAndVoucherNumberInTheSameColumn.Checked = f.settingsMgr.CurrentSettings.SalesPointAndVoucherNumberInTheSameColumn.Value;
             cbGenerateVouchersNumbers.Checked = f.settingsMgr.CurrentSettings.GenerateVouchersNumbersIfMissing.Value;
             cbLoadLastPreferences.Checked = f.settingsMgr.CurrentSettings.LoadLastIndexesUsed.Value;
             cbSaveOptionsOnExit.Checked = f.settingsMgr.CurrentSettings.SaveOnExit.Value;
@@ -43,9 +42,6 @@ namespace SiAp_Parser
             {
                 case "cbValidateRowBasedOnDate":
                     mainForm.settingsMgr.CurrentSettings.ValidateRowsBasedOnDate.Value = cbIsChecked;
-                    break;
-                case "cbSalesPointAndVoucherNumberInTheSameColumn":
-                    mainForm.settingsMgr.CurrentSettings.SalesPointAndVoucherNumberInTheSameColumn.Value = cbIsChecked;
                     break;
                 case "cbGenerateVouchersNumbers":
                     mainForm.settingsMgr.CurrentSettings.GenerateVouchersNumbersIfMissing.Value = cbIsChecked;

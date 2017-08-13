@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Enums\TipoPersona.cs" />
     <Compile Include="Extensions\FileStreamExtensions.cs" />
+    <Compile Include="Extensions\IExcelDataReaderExtensions.cs" />
     <Compile Include="Forms\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,8 +109,7 @@
     <Compile Include="Enums\CodigosDocumentos.cs" />
     <Compile Include="Enums\TipoComprobante.cs" />
     <Compile Include="Enums\TiposLibro.cs" />
-    <Compile Include="Extensions\BoolExtensions.cs" />
-    <Compile Include="Extensions\DecimalExtensions.cs" />
+    <Compile Include="Extensions\DoubleExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
@@ -152,6 +152,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Serialization\Indexes.cs" />
     <Compile Include="Serialization\BuysIndexes.cs" />
+    <Compile Include="Settings\DocumentSettings.cs" />
     <Compile Include="Settings\IndexesConfig.cs" />
     <Compile Include="Settings\OutputConfig.cs" />
     <Compile Include="Settings\PreferencesConfig.cs" />

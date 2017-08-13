@@ -34,7 +34,7 @@ namespace SiAp_Parser.Models
 
         private bool VerificarValidez()
         {
-            decimal calculatedTotal = 0;
+            double calculatedTotal = 0;
 
             calculatedTotal += ImporteConceptosNoIntegranElNetoGravado;
             calculatedTotal += ImporteOperacionesExentas;
@@ -93,22 +93,23 @@ namespace SiAp_Parser.Models
 
         public string DespachoImportacion { get; set; }
 
-        private decimal _importePercepcionesIVA;
-        public decimal ImportePercepcionesIVA
+        private double _importePercepcionesIVA;
+        public double ImportePercepcionesIVA
         {
             get { return _importePercepcionesIVA; }
             set
             {
                 if (value <= 0)
                     return;
+
                 _importePercepcionesIVA = value;
             }
         }
 
         public new List<AlicuotaCompra> Alicuotas { get; set; }
-        public decimal CreditoFiscalComputable { get; set; }
+        public double CreditoFiscalComputable { get; set; }
         public string CUITEmisor { get; set; }
         public string DenominacionEmisor { get; set; }
-        public decimal IVAComision { get; set; }
+        public double IVAComision { get; set; }
     }
 }

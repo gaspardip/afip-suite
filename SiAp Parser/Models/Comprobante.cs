@@ -246,10 +246,10 @@ namespace SiAp_Parser.Models
                 _contratante = (value.Length <= 30 ? value : value.Substring(0, 30)).ToUpper();
             }
         }
-        public decimal ImporteTotal { get; set; }
+        public double ImporteTotal { get; set; }
 
-        private decimal _importeConceptosNoIntegranElNetoGravado;
-        public decimal ImporteConceptosNoIntegranElNetoGravado
+        private double _importeConceptosNoIntegranElNetoGravado;
+        public double ImporteConceptosNoIntegranElNetoGravado
         {
             get { return _importeConceptosNoIntegranElNetoGravado; }
             set
@@ -260,8 +260,8 @@ namespace SiAp_Parser.Models
             }
         }
 
-        private decimal _importeOperacionesExentas;
-        public decimal ImporteOperacionesExentas
+        private double _importeOperacionesExentas;
+        public double ImporteOperacionesExentas
         {
             get { return _importeOperacionesExentas; }
             set
@@ -272,8 +272,8 @@ namespace SiAp_Parser.Models
             }
         }
 
-        private decimal _importePercepcionesImpuestosNacionales;
-        public decimal ImportePercepcionesImpuestosNacionales
+        private double _importePercepcionesImpuestosNacionales;
+        public double ImportePercepcionesImpuestosNacionales
         {
             get { return _importePercepcionesImpuestosNacionales; }
             set
@@ -284,8 +284,8 @@ namespace SiAp_Parser.Models
             }
         }
 
-        private decimal _importeIngresosBrutos;
-        public decimal ImporteIngresosBrutos
+        private double _importeIngresosBrutos;
+        public double ImporteIngresosBrutos
         {
             get { return _importeIngresosBrutos; }
             set
@@ -296,8 +296,8 @@ namespace SiAp_Parser.Models
             }
         }
 
-        private decimal _importeImpuestosMunicipales;
-        public decimal ImporteImpuestosMunicipales
+        private double _importeImpuestosMunicipales;
+        public double ImporteImpuestosMunicipales
         {
             get { return _importeImpuestosMunicipales; }
             set
@@ -308,8 +308,8 @@ namespace SiAp_Parser.Models
             }
         }
 
-        private decimal _importeImpuestosInternos;
-        public decimal ImporteImpuestosInternos
+        private double _importeImpuestosInternos;
+        public double ImporteImpuestosInternos
         {
             get { return _importeImpuestosInternos; }
             set
@@ -321,10 +321,10 @@ namespace SiAp_Parser.Models
         }
 
         public string CodigoMoneda { get; set; }
-        public decimal TipoCambio { get; set; }
+        public double TipoCambio { get; set; }
         public ushort CantidadAlicuotasIVA { get; set; }
         public List<Alicuota> Alicuotas { get; set; }
         public string CodigoOperacion { get; set; }
-        public decimal OtrosTributos { get; set; }
+        public double OtrosTributos { get; set; }
     }
 }

@@ -45,8 +45,8 @@ namespace SiAp_Parser
         public CodigosDocumentos CodigoDocumentoContratante { get; set; }
         public string NumeroIdentificacionContratante { get; set; }
 
-        private decimal _importeNeto;
-        public decimal ImporteNeto
+        private double _importeNeto;
+        public double ImporteNeto
         {
             get { return _importeNeto; }
             set
@@ -58,8 +58,8 @@ namespace SiAp_Parser
         }
         public ushort Tipo { get; private set; }
 
-        private decimal _porcentaje;
-        public decimal Porcentaje
+        private double _porcentaje;
+        public double Porcentaje
         {
             get { return _porcentaje; }
             set
@@ -68,34 +68,34 @@ namespace SiAp_Parser
                 switch ((int)(value * 100))
                 {
                     case 0:
-                        _porcentaje = 0m;
+                        _porcentaje = 0d;
                         Tipo = 3;
                         break;
                     case 1050:
-                        _porcentaje = 0.105m;
+                        _porcentaje = 0.105d;
                         Tipo = 4;
                         break;
                     case 2100:
-                        _porcentaje = 0.21m;
+                        _porcentaje = 0.21d;
                         Tipo = 5;
                         break;
                     case 2700:
-                        _porcentaje = 0.27m;
+                        _porcentaje = 0.27d;
                         Tipo = 6;
                         break;
                     case 500:
-                        _porcentaje = 0.05m;
+                        _porcentaje = 0.05d;
                         Tipo = 8;
                         break;
                     case 250:
-                        _porcentaje = 0.025m;
+                        _porcentaje = 0.025d;
                         Tipo = 9;
                         break;
                 }
             }
         }
 
-        public decimal ImpuestoLiquidado
+        public double ImpuestoLiquidado
         {
             get { return ImporteNeto * Porcentaje; }
         }
