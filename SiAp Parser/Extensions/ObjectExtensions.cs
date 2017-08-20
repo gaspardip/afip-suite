@@ -12,6 +12,7 @@ namespace SiAp_Parser.Extensions
             var emptyNamespaces = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
             var serializer = new XmlSerializer(value.GetType());
             var settings = new XmlWriterSettings();
+
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;
 

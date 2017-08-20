@@ -15,7 +15,7 @@ namespace SiAp_Parser.Helpers
 
             var serializer = new XmlSerializer(typeof(T));
 
-            using (StreamReader sr = new StreamReader(input))
+            using (var sr = new StreamReader(input))
                 return (T)serializer.Deserialize(sr);
         }
     }

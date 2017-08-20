@@ -13,23 +13,13 @@ namespace SiAp_Parser.Models
             Fecha = DateTime.Now;
             Tipo = TipoComprobante.OTROS_COMP_QUE_NO_CUMPLEN_CON_LA_R_G_1415_Y_SUS_MODIF;
             PuntoDeVenta = 1;
-            Numero = 0;
             CodigoDocumentoContratante = CodigosDocumentos.C_U_I_T;
             NumeroIdentificacionContratante = "0";
             Contratante = string.Empty;
-            ImporteTotal = 0;
-            ImporteConceptosNoIntegranElNetoGravado = 0;
-            ImporteOperacionesExentas = 0;
-            ImportePercepcionesImpuestosNacionales = 0;
-            ImporteIngresosBrutos = 0;
-            ImporteImpuestosMunicipales = 0;
-            ImporteImpuestosInternos = 0;
             CodigoMoneda = Monedas.PESOS_ARGENTINOS;
             TipoCambio = 1;
-            CantidadAlicuotasIVA = 0;
             Alicuotas = new List<Alicuota>();
             CodigoOperacion = string.Empty;
-            OtrosTributos = 0;
         }
 
         public Comprobante(Comprobante c)
@@ -54,6 +44,27 @@ namespace SiAp_Parser.Models
             Alicuotas = c.Alicuotas;
             CodigoOperacion = c.CodigoOperacion;
             OtrosTributos = c.OtrosTributos;
+        }
+
+        public bool Es(GrupoComprobante gc)
+        {
+            switch (gc)
+            {
+                case GrupoComprobante.FACTURA:
+                    return
+                        Tipo == TipoComprobante.FACTURAS_A ||
+                        Tipo == TipoComprobante.FACTURAS_B ||
+                        Tipo == TipoComprobante.FACTURAS_C ||
+                        Tipo == TipoComprobante.FACTURAS_M;
+                case GrupoComprobante.NOTA_DE_CREDITO:
+                    return
+                        Tipo == TipoComprobante.NOTAS_DE_CREDITO_A ||
+                        Tipo == TipoComprobante.NOTAS_DE_CREDITO_B ||
+                        Tipo == TipoComprobante.NOTAS_DE_CREDITO_C ||
+                        Tipo == TipoComprobante.NOTAS_DE_CREDITO_M;
+                default:
+                    return false;
+            }
         }
 
         public bool EsValido { get; set; }

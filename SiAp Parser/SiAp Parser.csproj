@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\GrupoComprobante.cs" />
     <Compile Include="Enums\TipoPersona.cs" />
     <Compile Include="Extensions\FileStreamExtensions.cs" />
     <Compile Include="Extensions\IExcelDataReaderExtensions.cs" />

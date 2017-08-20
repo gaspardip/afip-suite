@@ -697,6 +697,7 @@ namespace SiAp_Parser
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
+
                 return;
             }
             #endregion

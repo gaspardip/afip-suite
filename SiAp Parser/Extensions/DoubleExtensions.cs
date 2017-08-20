@@ -11,7 +11,7 @@ namespace SiAp_Parser.Extensions
         /// <returns></returns>
         public static string ToSIApFormat(this double value, string format = "0.00", int padLeftWidth = 15)
         {
-            return value.ToString(format).Replace(",", string.Empty).PadLeft(padLeftWidth, '0');
+            return Math.Abs(value).ToString(format).Replace(",", string.Empty).PadLeft(padLeftWidth, '0');
         }
 
         // http://stackoverflow.com/questions/5940222/how-to-properly-compare-double-values-in-c
