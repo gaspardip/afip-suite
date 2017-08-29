@@ -965,6 +965,9 @@ namespace SiAp_Parser
 
             var i = settings.Indexes;
 
+            if (i == null)
+                return;
+
             #region General indexes
 
             cbDate.Checked = nudDate.Enabled = i.Date.Enabled;
