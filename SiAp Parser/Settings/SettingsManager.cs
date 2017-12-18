@@ -40,12 +40,12 @@ namespace SiAp_Parser.Settings
 
         /// <summary>
         /// Loads an existing config file
-        /// <exception cref="System.ArgumentException"></exception>
-        /// <exception cref="System.ArgumentNullException"></exception>
-        /// <exception cref="System.IO.FileNotFoundException"></exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"></exception>
-        /// <exception cref="System.IO.IOException"></exception>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         /// </summary>
         public void Load()
         {

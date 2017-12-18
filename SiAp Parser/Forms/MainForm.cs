@@ -996,10 +996,8 @@ namespace SiAp_Parser
 
             #region Buys indexes
 
-            if (i is BuysIndexes)
+            if (i is BuysIndexes bi)
             {
-                var bi = (BuysIndexes)i;
-
                 cbImportClearance.Checked = nudImportClearance.Enabled = bi.ImportClearance.Enabled;
                 cbVATPerceptionsAmount.Checked = nudVATPerceptionsAmount.Enabled = bi.VATPerceptionsAmount.Enabled;
                 cbComputableTaxCredit.Checked = nudComputableTaxCredit.Enabled = bi.ComputableTaxCredit.Enabled;
@@ -1019,10 +1017,8 @@ namespace SiAp_Parser
 
             #region Sales indexes
 
-            if (i is SalesIndexes)
+            if (i is SalesIndexes si)
             {
-                var si = (SalesIndexes)i;
-
                 cbVoucherNumberUntil.Checked = nudVoucherNumberUntil.Enabled = si.VoucherNumberUntil.Enabled;
                 cbUncategorizedPerceptionAmount.Checked = nudUncategorizedPerceptionAmount.Enabled = si.UncategorizedPerceptionAmount.Enabled;
                 cbPaymentExpireDate.Checked = nudPaymentExpireDate.Enabled = si.PaymentExpireDate.Enabled;
