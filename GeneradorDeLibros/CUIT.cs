@@ -62,7 +62,7 @@ namespace GeneradorDeLibros
         private string _tipo;
         public string Tipo
         {
-            get { return _tipo; }
+            get => _tipo;
             private set
             {
                 if (value.Length != 2 || !regex.IsMatch(value))
@@ -74,7 +74,7 @@ namespace GeneradorDeLibros
         private string _numero;
         public string Numero
         {
-            get { return _numero; }
+            get => _numero;
             private set
             {
                 if (value.Length != 8 || !regex.IsMatch(value))
@@ -88,7 +88,7 @@ namespace GeneradorDeLibros
         private string _digitoVerificador;
         public string DigitoVerificador
         {
-            get { return _digitoVerificador; }
+            get => _digitoVerificador;
             private set
             {
                 if (value.Length != 1 || !regex.IsMatch(value))

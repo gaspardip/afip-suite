@@ -3,10 +3,10 @@ using System.Windows.Forms;
 
 namespace SiAp_Parser
 {
-    /// <summary>
-    ///
-    /// </summary>
-    /// http://stackoverflow.com/questions/1665533/communicate-between-two-windows-forms-in-c-sharp
+    ///  <inheritdoc />
+    ///  <summary>
+    ///  </summary>
+    ///  http://stackoverflow.com/questions/1665533/communicate-between-two-windows-forms-in-c-sharp
     public partial class OptionsForm : Form
     {
         private MainForm mainForm;
@@ -17,13 +17,13 @@ namespace SiAp_Parser
 
             mainForm = f;
 
-            cbValidateRowBasedOnDate.Checked = f.settingsMgr.CurrentSettings.ValidateRowsBasedOnDate.Value;
-            cbGenerateVouchersNumbers.Checked = f.settingsMgr.CurrentSettings.GenerateVouchersNumbersIfMissing.Value;
-            cbLoadLastPreferences.Checked = f.settingsMgr.CurrentSettings.LoadLastIndexesUsed.Value;
-            cbSaveOptionsOnExit.Checked = f.settingsMgr.CurrentSettings.SaveOnExit.Value;
-            cbShowResults.Checked = f.settingsMgr.CurrentSettings.ShowResults.Value;
-            cbAutoSaveLogs.Checked = f.settingsMgr.CurrentSettings.AutoSaveLogs.Value;
-            cbGetMissingFields.Checked = f.settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value;
+            cbValidateRowBasedOnDate.Checked = f.SettingsManager.CurrentSettings.ValidateRowsBasedOnDate.Value;
+            cbGenerateVouchersNumbers.Checked = f.SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value;
+            cbLoadLastPreferences.Checked = f.SettingsManager.CurrentSettings.LoadLastIndexesUsed.Value;
+            cbSaveOptionsOnExit.Checked = f.SettingsManager.CurrentSettings.SaveOnExit.Value;
+            cbShowResults.Checked = f.SettingsManager.CurrentSettings.ShowResults.Value;
+            cbAutoSaveLogs.Checked = f.SettingsManager.CurrentSettings.AutoSaveLogs.Value;
+            cbGetMissingFields.Checked = f.SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value;
         }
 
         private void cbSettings_CheckedChanged(object sender, EventArgs e)
@@ -36,37 +36,37 @@ namespace SiAp_Parser
             if (cb != ActiveControl)
                 return;
 
-            bool cbIsChecked = cb.Checked;
+            var cbIsChecked = cb.Checked;
 
             switch (cb.Name)
             {
                 case "cbValidateRowBasedOnDate":
-                    mainForm.settingsMgr.CurrentSettings.ValidateRowsBasedOnDate.Value = cbIsChecked;
+                    mainForm.SettingsManager.CurrentSettings.ValidateRowsBasedOnDate.Value = cbIsChecked;
                     break;
                 case "cbGenerateVouchersNumbers":
-                    mainForm.settingsMgr.CurrentSettings.GenerateVouchersNumbersIfMissing.Value = cbIsChecked;
+                    mainForm.SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value = cbIsChecked;
                     break;
                 case "cbLoadLastPreferences":
-                    mainForm.settingsMgr.CurrentSettings.LoadLastIndexesUsed.Value = cbIsChecked;
+                    mainForm.SettingsManager.CurrentSettings.LoadLastIndexesUsed.Value = cbIsChecked;
                     break;
                 case "cbSaveOptionsOnExit":
-                    btnSaveOptions.Enabled = mainForm.settingsMgr.CurrentSettings.SaveOnExit.Value = cbIsChecked;
+                    btnSaveOptions.Enabled = mainForm.SettingsManager.CurrentSettings.SaveOnExit.Value = cbIsChecked;
                     break;
                 case "cbShowResults":
-                    mainForm.settingsMgr.CurrentSettings.ShowResults.Value = cbIsChecked;
+                    mainForm.SettingsManager.CurrentSettings.ShowResults.Value = cbIsChecked;
                     break;
                 case "cbAutoSaveResults":
-                    mainForm.settingsMgr.CurrentSettings.AutoSaveLogs.Value = cbIsChecked;
+                    mainForm.SettingsManager.CurrentSettings.AutoSaveLogs.Value = cbIsChecked;
                     break;
                 case "cbGetMissingFields":
-                    mainForm.settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value = cbIsChecked;
+                    mainForm.SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value = cbIsChecked;
                     break;
             }
         }
 
         private void btnSaveOptions_Click(object sender, EventArgs e)
         {
-            if (mainForm.settingsMgr.Save())
+            if (mainForm.SettingsManager.Save())
                 MessageBox.Show("Opciones guardadas con éxito", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
                 MessageBox.Show("Ocurrió un error guardando las opciones", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -49,22 +49,21 @@ namespace SiAp_Parser.Settings
         /// </summary>
         public void Load()
         {
-            if (File.Exists(this.PreferencesConfig.FilePath))
+            if (!File.Exists(this.PreferencesConfig.FilePath)) return;
+
+            try
             {
-                try
-                {
-                    this.CurrentSettings = SerializationHelpers.Deserialize<Settings>(this.PreferencesConfig.FilePath);
-                }
-                catch (Exception)
-                {
-                    // log
-                }
+                this.CurrentSettings = SerializationHelpers.Deserialize<Settings>(this.PreferencesConfig.FilePath);
+            }
+            catch (Exception)
+            {
+                // log
             }
         }
 
         public bool Save()
         {
-            byte[] previousHash = new byte[] { };
+            var previousHash = new byte[] { };
 
             if (File.Exists(this.PreferencesConfig.FilePath))
                 previousHash = this.PreferencesConfig.FilePath.GetFileHash();
@@ -96,11 +95,11 @@ namespace SiAp_Parser.Settings
         {
             get
             {
-                Settings OldSettings = null;
+                Settings oldSettings = null;
 
                 try
                 {
-                    OldSettings = SerializationHelpers.Deserialize<Settings>(PreferencesConfig.FilePath);
+                    oldSettings = SerializationHelpers.Deserialize<Settings>(PreferencesConfig.FilePath);
                 }
                 catch (Exception)
                 {
@@ -108,7 +107,7 @@ namespace SiAp_Parser.Settings
                     return false;
                 }
 
-                return !CurrentSettings.Equals(OldSettings);
+                return !CurrentSettings.Equals(oldSettings);
             }
         }
     }

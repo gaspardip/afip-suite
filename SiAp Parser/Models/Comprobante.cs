@@ -74,7 +74,7 @@ namespace SiAp_Parser.Models
         private TipoComprobante _tipo;
         public dynamic Tipo
         {
-            get { return _tipo; }
+            get => _tipo;
             set
             {
                 if (value is string)
@@ -83,7 +83,7 @@ namespace SiAp_Parser.Models
                         return;
 
                     string[] parts;
-                    string finalTypeStr = string.Empty;
+                    var finalTypeStr = string.Empty;
 
                     parts = Regex.Replace(value, @"(["",.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
                     parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
@@ -211,7 +211,7 @@ namespace SiAp_Parser.Models
         private short _puntoDeVenta;
         public short PuntoDeVenta
         {
-            get { return _puntoDeVenta; }
+            get => _puntoDeVenta;
             set
             {
                 if (value < 0)
@@ -223,7 +223,7 @@ namespace SiAp_Parser.Models
         private int _numero;
         public int Numero
         {
-            get { return _numero; }
+            get => _numero;
             set
             {
                 if (value < 0)
@@ -237,7 +237,7 @@ namespace SiAp_Parser.Models
         private string _numeroIdentificacionContratante;
         public string NumeroIdentificacionContratante
         {
-            get { return _numeroIdentificacionContratante; }
+            get => _numeroIdentificacionContratante;
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -250,7 +250,7 @@ namespace SiAp_Parser.Models
         private string _contratante;
         public string Contratante
         {
-            get { return _contratante; }
+            get => _contratante;
             set
             {
                 value = Regex.Replace(value, @"[^\u0000-\u007F]+", string.Empty);
@@ -262,7 +262,7 @@ namespace SiAp_Parser.Models
         private double _importeConceptosNoIntegranElNetoGravado;
         public double ImporteConceptosNoIntegranElNetoGravado
         {
-            get { return _importeConceptosNoIntegranElNetoGravado; }
+            get => _importeConceptosNoIntegranElNetoGravado;
             set
             {
                 if (value < 0)
@@ -274,7 +274,7 @@ namespace SiAp_Parser.Models
         private double _importeOperacionesExentas;
         public double ImporteOperacionesExentas
         {
-            get { return _importeOperacionesExentas; }
+            get => _importeOperacionesExentas;
             set
             {
                 if (value < 0)
@@ -286,7 +286,7 @@ namespace SiAp_Parser.Models
         private double _importePercepcionesImpuestosNacionales;
         public double ImportePercepcionesImpuestosNacionales
         {
-            get { return _importePercepcionesImpuestosNacionales; }
+            get => _importePercepcionesImpuestosNacionales;
             set
             {
                 if (value < 0)
@@ -298,7 +298,7 @@ namespace SiAp_Parser.Models
         private double _importeIngresosBrutos;
         public double ImporteIngresosBrutos
         {
-            get { return _importeIngresosBrutos; }
+            get => _importeIngresosBrutos;
             set
             {
                 if (value < 0)
@@ -310,7 +310,7 @@ namespace SiAp_Parser.Models
         private double _importeImpuestosMunicipales;
         public double ImporteImpuestosMunicipales
         {
-            get { return _importeImpuestosMunicipales; }
+            get => _importeImpuestosMunicipales;
             set
             {
                 if (value < 0)
@@ -322,7 +322,7 @@ namespace SiAp_Parser.Models
         private double _importeImpuestosInternos;
         public double ImporteImpuestosInternos
         {
-            get { return _importeImpuestosInternos; }
+            get => _importeImpuestosInternos;
             set
             {
                 if (value < 0)

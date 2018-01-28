@@ -30,7 +30,7 @@ namespace SiAp_Parser.Models
             Alicuotas = c.Alicuotas;
         }
 
-        public new bool EsValido { get { return VerificarValidez(); } }
+        public new bool EsValido => VerificarValidez();
 
         private bool VerificarValidez()
         {
@@ -96,7 +96,7 @@ namespace SiAp_Parser.Models
         private double _importePercepcionesIVA;
         public double ImportePercepcionesIVA
         {
-            get { return _importePercepcionesIVA; }
+            get => _importePercepcionesIVA;
             set
             {
                 if (value <= 0)

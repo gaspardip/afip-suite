@@ -19,7 +19,7 @@ namespace SiAp_Parser
         {
             decimal c, t = 0;
 
-            for (int i = 0; i < dgvResults.Rows.Count; ++i)
+            for (var i = 0; i < dgvResults.Rows.Count; ++i)
             {
                 //c += Convert.ToInt32(dgvResults.Rows[i].Cells[1].Value);
                 t += Convert.ToDecimal(dgvResults.Rows[i].Cells[dgvResults.Rows[i].Cells.Count - 1].Value);

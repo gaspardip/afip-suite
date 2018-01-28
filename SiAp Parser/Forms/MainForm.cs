@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,27 +7,26 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
-using SiAp_Parser.Settings;
+using NLog;
+using SiAp_Parser.Enums;
 using SiAp_Parser.Extensions;
 using SiAp_Parser.Helpers;
 using SiAp_Parser.Models;
-using SiAp_Parser.Enums;
 using SiAp_Parser.Serialization;
-using System.Collections;
-using NLog;
+using SiAp_Parser.Settings;
 
 namespace SiAp_Parser
 {
     public partial class MainForm : Form
     {
-        internal SettingsManager settingsMgr;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public SettingsManager SettingsManager { get; }
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public MainForm()
         {
             InitializeComponent();
 
-            settingsMgr = new SettingsManager(true);
+            SettingsManager = new SettingsManager(true);
 
             #region ComboBox
 
@@ -37,19 +37,19 @@ namespace SiAp_Parser
 
             #endregion
 
-            if (!settingsMgr.CurrentSettings.LoadLastIndexesUsed.Value)
+            if (!SettingsManager.CurrentSettings.LoadLastIndexesUsed.Value)
                 return;
 
-            if (!File.Exists(settingsMgr.CurrentSettings.LastDocumentSettingsPath.Value))
+            if (!File.Exists(SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value))
                 return;
 
             try
             {
-                var ds = SerializationHelpers.Deserialize<DocumentSettings>(settingsMgr.CurrentSettings.LastDocumentSettingsPath.Value);
+                var ds = SerializationHelpers.Deserialize<DocumentSettings>(SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value);
 
                 RestoreDocumentSettings(ds);
 
-                txtFilepath.Text = settingsMgr.CurrentSettings.LastFileUsedPath.Value;
+                txtFilepath.Text = SettingsManager.CurrentSettings.LastFileUsedPath.Value;
                 btnProcessFile.Enabled = true;
                 tabCtrlSettings.Visible = true;
             }
@@ -57,7 +57,7 @@ namespace SiAp_Parser
             {
                 MessageBox.Show
                 (
-                    String.Format("Ocurrió un error al cargar las preferencias{0}{1}", Environment.NewLine + Environment.NewLine, ex.Message),
+                    string.Format("Ocurrió un error al cargar las preferencias{0}{1}", Environment.NewLine + Environment.NewLine, ex.Message),
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -67,13 +67,13 @@ namespace SiAp_Parser
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (settingsMgr.CurrentSettings.SaveOnExit.Value)
-                settingsMgr.Save();
+            if (SettingsManager.CurrentSettings.SaveOnExit.Value)
+                SettingsManager.Save();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (settingsMgr.HasUnsavedChanges && !settingsMgr.CurrentSettings.SaveOnExit.Value)
+            if (SettingsManager.HasUnsavedChanges && !SettingsManager.CurrentSettings.SaveOnExit.Value)
                 e.Cancel = MessageBox.Show("Tiene cambios sin guardar. ¿Está seguro que quiere salir?", "Alerta", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No;
         }
 
@@ -88,28 +88,27 @@ namespace SiAp_Parser
                 ReadOnlyChecked = true
             };
 
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                settingsMgr.CurrentSettings.LastFileUsedPath.Value = ofd.FileName;
+            if (ofd.ShowDialog() != DialogResult.OK) return;
 
-                var fileNameToLower = ofd.FileName.ToLower();
+            SettingsManager.CurrentSettings.LastFileUsedPath.Value = ofd.FileName;
 
-                var isBuysBook = fileNameToLower.IndexOf("compras", StringComparison.CurrentCultureIgnoreCase) != -1;
-                var isSalesBook = fileNameToLower.IndexOf("ventas", StringComparison.CurrentCultureIgnoreCase) != -1;
-                var weirdCase = isBuysBook == isSalesBook;
+            var fileNameToLower = ofd.FileName.ToLower();
 
-                cmbTipo.SelectedIndex = (isBuysBook || weirdCase) || !isSalesBook ? 0 : 1;
+            var isBuysBook = fileNameToLower.IndexOf("compras", StringComparison.CurrentCultureIgnoreCase) != -1;
+            var isSalesBook = fileNameToLower.IndexOf("ventas", StringComparison.CurrentCultureIgnoreCase) != -1;
+            var weirdCase = isBuysBook == isSalesBook;
 
-                txtFilepath.Text = ofd.FileName;
-                tabCtrlSettings.Visible = true;
-                btnProcessFile.Enabled = true;
-            }
+            cmbTipo.SelectedIndex = isBuysBook || weirdCase ? 0 : 1;
+
+            txtFilepath.Text = ofd.FileName;
+            tabCtrlSettings.Visible = true;
+            btnProcessFile.Enabled = true;
         }
 
         private void btnProcessFile_Click(object sender, EventArgs e)
         {
-            settingsMgr.CurrentSettings.LastBookTypeUsed.Value = settingsMgr.CurrentBookType;
-            settingsMgr.CurrentSettings.LastDocumentSettingsPath.Value = settingsMgr.CurrentIndexesPath;
+            SettingsManager.CurrentSettings.LastBookTypeUsed.Value = SettingsManager.CurrentBookType;
+            SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value = SettingsManager.CurrentIndexesPath;
 
             var comprobantes = new List<dynamic>();
 
@@ -126,48 +125,48 @@ namespace SiAp_Parser
                     "Date",
                     new List<Control>
                     {
-                        { cbDate },
-                        { nudDate }
+                        cbDate,
+                        nudDate
                     }
                 },
                 {
                     "VoucherType",
                     new List<Control>
                     {
-                        { cbVoucherType },
-                        { nudVoucherType }
+                        cbVoucherType,
+                        nudVoucherType
                     }
                 },
                 {
                     "SalesPoint",
                     new List<Control>
                     {
-                        { cbSalesPoint },
-                        { nudSalesPoint }
+                        cbSalesPoint,
+                        nudSalesPoint
                     }
                 },
                 {
                     "VoucherNumber",
                     new List<Control>
                     {
-                        { cbVoucherNumber },
-                        { nudVoucherNumber }
+                        cbVoucherNumber,
+                        nudVoucherNumber
                     }
                 },
                 {
                     "SellerName",
                     new List<Control>
                     {
-                        { cbSellerName },
-                        { nudSellerName }
+                        cbSellerName,
+                        nudSellerName
                     }
                 },
                 {
                     "SellerNumber",
                     new List<Control>
                     {
-                        { cbSellerNumber },
-                        { nudSellerNumber }
+                        cbSellerNumber,
+                        nudSellerNumber
                     }
                 },
                 {
@@ -228,39 +227,39 @@ namespace SiAp_Parser
                     "UntaxedNet",
                     new List<Control>
                     {
-                        { cbUntaxedNet },
-                        { nudUntaxedNet }
+                        cbUntaxedNet,
+                        nudUntaxedNet
                     }
                 },
                 {
                     "GrossIncome",
                     new List<dynamic>
                     {
-                        { cbGrossIncome },
-                        { txtGrossIncome }
+                        cbGrossIncome,
+                        txtGrossIncome
                     }
                 },
                 {
                     "InternalTaxes",
                     new List<dynamic>
                     {
-                        { cbInternalTaxes },
-                        { nudInternalTaxes }
+                        cbInternalTaxes,
+                        nudInternalTaxes
                     }
                 },
                 {
                     "Total",
                     new List<Control>
                     {
-                        { cbTotal },
-                        { nudTotal }
+                        cbTotal,
+                        nudTotal
                     }
                 },
             };
 
             #endregion
 
-            switch (settingsMgr.CurrentBookType)
+            switch (SettingsManager.CurrentBookType)
             {
                 case TiposLibro.COMPRAS:
                     #region Buys associations
@@ -269,8 +268,8 @@ namespace SiAp_Parser
                         "ImportClearance",
                         new List<Control>
                         {
-                            { cbImportClearance },
-                            { nudImportClearance }
+                            cbImportClearance,
+                            nudImportClearance
                         }
                     );
                     associations.Add
@@ -278,8 +277,8 @@ namespace SiAp_Parser
                         "VATPerceptionsAmount",
                         new List<Control>
                         {
-                            { cbVATPerceptionsAmount },
-                            { nudVATPerceptionsAmount }
+                            cbVATPerceptionsAmount,
+                            nudVATPerceptionsAmount
                         }
                     );
                     associations.Add
@@ -287,8 +286,8 @@ namespace SiAp_Parser
                         "ComputableTaxCredit",
                         new List<Control>
                         {
-                            { cbComputableTaxCredit },
-                            { nudComputableTaxCredit }
+                            cbComputableTaxCredit,
+                            nudComputableTaxCredit
                         }
                     );
                     associations.Add
@@ -296,8 +295,8 @@ namespace SiAp_Parser
                         "CUITIssuer",
                         new List<Control>
                         {
-                            { cbCUITIssuer },
-                            { nudCUITIssuer }
+                            cbCUITIssuer,
+                            nudCUITIssuer
                         }
                     );
                     associations.Add
@@ -305,8 +304,8 @@ namespace SiAp_Parser
                         "IssuerName",
                         new List<Control>
                         {
-                            { cbIssuerName },
-                            { nudIssuerName }
+                            cbIssuerName,
+                            nudIssuerName
                         }
                     );
                     associations.Add
@@ -314,8 +313,8 @@ namespace SiAp_Parser
                         "VATCommission",
                         new List<Control>
                         {
-                            { cbVATCommission },
-                            { nudVATCommission }
+                            cbVATCommission,
+                            nudVATCommission
                         }
                     );
                     break;
@@ -327,8 +326,8 @@ namespace SiAp_Parser
                         "VoucherNumberUntil",
                         new List<Control>
                         {
-                            { cbVoucherNumberUntil },
-                            { nudVoucherNumberUntil }
+                            cbVoucherNumberUntil,
+                            nudVoucherNumberUntil
                         }
                     );
                     associations.Add
@@ -336,8 +335,8 @@ namespace SiAp_Parser
                         "UncategorizedPerceptionAmount",
                         new List<Control>
                         {
-                            { cbUncategorizedPerceptionAmount },
-                            { nudUncategorizedPerceptionAmount }
+                            cbUncategorizedPerceptionAmount,
+                            nudUncategorizedPerceptionAmount
                         }
                     );
                     associations.Add
@@ -345,8 +344,8 @@ namespace SiAp_Parser
                         "PaymentExpireDate",
                         new List<Control>
                         {
-                            { cbPaymentExpireDate },
-                            { nudPaymentExpireDate }
+                            cbPaymentExpireDate,
+                            nudPaymentExpireDate
                         }
                     );
                     #endregion
@@ -385,9 +384,8 @@ namespace SiAp_Parser
             var indexesCopy = indexes;
 
             if (
-                cbSalesPointAndVoucherNumberInTheSameColumn.Checked &&
-                (indexes.ContainsKey("SalesPoint") && indexes.ContainsKey("VoucherNumber")) &&
-                (indexes["SalesPoint"] == indexes["VoucherNumber"])
+                cbSalesPointAndVoucherNumberInTheSameColumn.Checked && indexes.ContainsKey("SalesPoint") && indexes.ContainsKey("VoucherNumber") &&
+                indexes["SalesPoint"] == indexes["VoucherNumber"]
             )
                 indexesCopy.Remove("VoucherNumber");
 
@@ -415,224 +413,219 @@ namespace SiAp_Parser
                         continue;
                     }
 
+                    var isValidRow = date.Year != 1;
 
-                    bool isValidRow = date.Year != 1;
+                    if (!isValidRow) continue;
 
-                    if (isValidRow)
+                    dynamic c = null;
+                    Persona p = null;
+
+                    switch (SettingsManager.CurrentBookType)
                     {
-                        dynamic c = null;
-                        Persona p = null;
+                        case TiposLibro.COMPRAS:
+                            c = new ComprobanteCompra();
 
-                        switch (settingsMgr.CurrentBookType)
+                            if (indexes.ContainsKey("ImportClearance"))
+                                c.DespachoImportacion = excelReader.GetSafeString((int)indexes["ImportClearance"]).Trim();
+                            if (indexes.ContainsKey("VATPerceptionsAmount"))
+                                c.ImportePercepcionesIVA = excelReader.GetSafeDouble((int)indexes["VATPerceptionsAmount"]);
+                            if (indexes.ContainsKey("CUITIssuer"))
+                                c.CUITEmisor = excelReader.GetSafeString((int)indexes["CUITIssuer"]).Trim();
+                            if (indexes.ContainsKey("ComputableTaxCredit"))
+                                c.CreditoFiscalComputable = excelReader.GetSafeDouble((int)indexes["ComputableTaxCredit"]);
+                            if (indexes.ContainsKey("IssuerName"))
+                                c.DenominacionEmisor = excelReader.GetSafeString((int)indexes["IssuerName"]).Trim();
+                            if (indexes.ContainsKey("VATCommission"))
+                                c.IVAComision = excelReader.GetSafeDouble((int)indexes["VATCommission"]);
+                            break;
+                        case TiposLibro.VENTAS:
+                            c = new ComprobanteVenta();
+
+                            if (indexes.ContainsKey("VoucherNumberUntil"))
+                                c.NumeroHasta = excelReader.GetInt32((int)indexes["VoucherNumberUntil"]);
+                            if (indexes.ContainsKey("UncategorizedPerceptionAmount"))
+                                c.ImportePercepcionNoCategorizados = excelReader.GetSafeDouble((int)indexes["UncategorizedPerceptionAmount"]);
+                            if (indexes.ContainsKey("PaymentExpireDate"))
+                                c.FechaVencimientoPago = excelReader.GetDateTime((int)indexes["PaymentExpireDate"]);
+                            break;
+                    }
+
+                    if (indexes.ContainsKey("Date"))
+                        c.Fecha = date;
+                    if (indexes.ContainsKey("VoucherType"))
+                        c.Tipo = excelReader.GetSafeString((int)indexes["VoucherType"]);
+
+                    if (indexes.ContainsKey("SalesPoint") || indexes.ContainsKey("VoucherNumber"))
+                    {
+                        if (cbSalesPointAndVoucherNumberInTheSameColumn.Checked)
                         {
-                            case TiposLibro.COMPRAS:
-                                c = new ComprobanteCompra();
+                            var strNumbers = excelReader.GetSafeString((int)indexes["SalesPoint"]);
+                            var numbers = new string[] { "1", "1" };
 
-                                if (indexes.ContainsKey("ImportClearance"))
-                                    c.DespachoImportacion = excelReader.GetSafeString((int)indexes["ImportClearance"]).Trim();
-                                if (indexes.ContainsKey("VATPerceptionsAmount"))
-                                    c.ImportePercepcionesIVA = excelReader.GetSafeDouble((int)indexes["VATPerceptionsAmount"]);
-                                if (indexes.ContainsKey("CUITIssuer"))
-                                    c.CUITEmisor = excelReader.GetSafeString((int)indexes["CUITIssuer"]).Trim();
-                                if (indexes.ContainsKey("ComputableTaxCredit"))
-                                    c.CreditoFiscalComputable = excelReader.GetSafeDouble((int)indexes["ComputableTaxCredit"]);
-                                if (indexes.ContainsKey("IssuerName"))
-                                    c.DenominacionEmisor = excelReader.GetSafeString((int)indexes["IssuerName"]).Trim();
-                                if (indexes.ContainsKey("VATCommission"))
-                                    c.IVAComision = excelReader.GetSafeDouble((int)indexes["VATCommission"]);
-                                break;
-                            case TiposLibro.VENTAS:
-                                c = new ComprobanteVenta();
+                            if (!string.IsNullOrEmpty(strNumbers))
+                                numbers = strNumbers.Replace(" ", string.Empty).Split('-');
 
-                                if (indexes.ContainsKey("VoucherNumberUntil"))
-                                    c.NumeroHasta = excelReader.GetInt32((int)indexes["VoucherNumberUntil"]);
-                                if (indexes.ContainsKey("UncategorizedPerceptionAmount"))
-                                    c.ImportePercepcionNoCategorizados = excelReader.GetSafeDouble((int)indexes["UncategorizedPerceptionAmount"]);
-                                if (indexes.ContainsKey("PaymentExpireDate"))
-                                    c.FechaVencimientoPago = excelReader.GetDateTime((int)indexes["PaymentExpireDate"]);
-                                break;
+                            // There is no salespoint for some reason... just use 1
+                            if (numbers.Length == 1)
+                                numbers = new string[] { "1", numbers[0] };
+
+                            short.TryParse(numbers[0], out var salesPoint);
+                            c.PuntoDeVenta = salesPoint;
+
+                            int.TryParse(numbers[1], out var voucherNumber);
+                            c.Numero = voucherNumber;
+                        }
+                        else
+                        {
+                            c.PuntoDeVenta = excelReader.GetInt16((int)indexes["SalesPoint"]);
+                            c.Numero = excelReader.GetInt32((int)indexes["VoucherNumber"]);
                         }
 
-                        if (indexes.ContainsKey("Date"))
-                            c.Fecha = date;
-                        if (indexes.ContainsKey("VoucherType"))
-                            c.Tipo = excelReader.GetSafeString((int)indexes["VoucherType"]);
-
-                        if (indexes.ContainsKey("SalesPoint") || indexes.ContainsKey("VoucherNumber"))
+                        if (SettingsManager.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
                         {
-                            if (cbSalesPointAndVoucherNumberInTheSameColumn.Checked)
+                            c.NumeroHasta = c.Numero;
+                        }
+                    }
+
+                    if (indexes.ContainsKey("SellerName"))
+                    {
+                        try
+                        {
+                            c.Contratante = excelReader.GetSafeString((int)indexes["SellerName"]).Trim();
+                        }
+                        catch
+                        {
+                            if (
+                                string.IsNullOrEmpty(c.Contratante) &&
+                                SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                indexes.ContainsKey("SellerNumber"))
                             {
-                                var strNumbers = excelReader.GetSafeString((int)indexes["SalesPoint"]);
-                                var numbers = new string[] { "1", "1" };
+                                c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
 
-                                if (!string.IsNullOrEmpty(strNumbers))
-                                    numbers = strNumbers.Replace(" ", string.Empty).Split('-');
+                                if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
+                                {
+                                    p = new CuitOnlineHelper(c.NumeroIdentificacionContratante).GetPersonInfo();
 
-                                // There is no salespoint for some reason... just use 1
-                                if (numbers.Length == 1)
-                                    numbers = new string[] { "1", numbers[0] };
-
-                                short salesPoint;
-                                int voucherNumber;
-
-                                Int16.TryParse(numbers[0], out salesPoint);
-                                c.PuntoDeVenta = salesPoint;
-
-                                Int32.TryParse(numbers[1], out voucherNumber);
-                                c.Numero = voucherNumber;
-                            }
-                            else
-                            {
-                                c.PuntoDeVenta = excelReader.GetInt16((int)indexes["SalesPoint"]);
-                                c.Numero = excelReader.GetInt32((int)indexes["VoucherNumber"]);
-                            }
-
-                            if (settingsMgr.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
-                            {
-                                c.NumeroHasta = c.Numero;
+                                    if (p != null)
+                                        c.Contratante = p.Denominacion;
+                                }
                             }
                         }
+                    }
 
-                        if (indexes.ContainsKey("SellerName"))
+                    if (indexes.ContainsKey("SellerNumber"))
+                    {
+                        if (c.NumeroIdentificacionContratante == "0")
                         {
                             try
                             {
-                                c.Contratante = excelReader.GetSafeString((int)indexes["SellerName"]).Trim();
+                                c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
+
+                                if (!ValidationHelper.IsValidCUIT(c.NumeroIdentificacionContratante))
+                                    throw new ArgumentException("Un CUIT no tiene el formato correcto");
                             }
                             catch
                             {
                                 if (
-                                    string.IsNullOrEmpty(c.Contratante) &&
-                                    settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value &&
-                                    indexes.ContainsKey("SellerNumber"))
+                                    SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                    indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
                                 {
-                                    c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
+                                    p = new CuitOnlineHelper(c.Contratante).GetPersonInfo();
 
-                                    if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
-                                    {
-                                        p = (new CuitOnlineHelper(c.NumeroIdentificacionContratante)).GetPersonInfo();
-
-                                        if (p != null)
-                                            c.Contratante = p.Denominacion;
-                                    }
+                                    if (p != null)
+                                        c.NumeroIdentificacionContratante = p.CUIT;
                                 }
                             }
                         }
-
-                        if (indexes.ContainsKey("SellerNumber"))
-                        {
-                            if (c.NumeroIdentificacionContratante == "0")
-                            {
-                                try
-                                {
-                                    c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
-
-                                    if (!ValidationHelper.IsValidCUIT(c.NumeroIdentificacionContratante))
-                                        throw new ArgumentException("Un CUIT no tiene el formato correcto");
-                                }
-                                catch
-                                {
-                                    if (
-                                        settingsMgr.CurrentSettings.GetMissingFieldsAutomatically.Value &&
-                                        indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
-                                    {
-                                        p = (new CuitOnlineHelper(c.Contratante)).GetPersonInfo();
-
-                                        if (p != null)
-                                            c.NumeroIdentificacionContratante = p.CUIT;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (indexes["Aliquots"].Count > 0)
-                        {
-                            foreach (KeyValuePair<string, int> item in indexes["Aliquots"])
-                            {
-                                double importeNeto = excelReader.GetSafeDouble(item.Value);
-
-                                if (importeNeto <= 0)
-                                    continue;
-
-                                dynamic a = null;
-
-                                switch (settingsMgr.CurrentBookType)
-                                {
-                                    case TiposLibro.COMPRAS:
-                                        a = new AlicuotaCompra()
-                                        {
-                                            TipoComprobante = c.Tipo,
-                                            PuntoDeVenta = c.PuntoDeVenta,
-                                            NumeroComprobante = c.Numero,
-                                            CodigoDocumentoContratante = c.CodigoDocumentoContratante,
-                                            NumeroIdentificacionContratante = c.NumeroIdentificacionContratante,
-                                            ImporteNeto = importeNeto
-                                        };
-                                        break;
-                                    case TiposLibro.VENTAS:
-                                        a = new AlicuotaVenta()
-                                        {
-                                            TipoComprobante = c.Tipo,
-                                            PuntoDeVenta = c.PuntoDeVenta,
-                                            NumeroComprobante = c.Numero,
-                                            ImporteNeto = importeNeto
-                                        };
-                                        break;
-                                }
-
-                                switch (item.Key)
-                                {
-                                    case "21":
-                                        a.Porcentaje = 21d;
-                                        break;
-                                    case "105":
-                                        a.Porcentaje = 10.5d;
-                                        break;
-                                    case "27":
-                                        a.Porcentaje = 27d;
-                                        break;
-                                    case "5":
-                                        a.Porcentaje = 5d;
-                                        break;
-                                    case "250":
-                                        a.Porcentaje = 2.5d;
-                                        break;
-                                    case "0":
-                                        a.Porcentaje = 0;
-                                        break;
-                                }
-
-                                c.Alicuotas.Add(a);
-                            }
-                        }
-
-                        if (indexes.ContainsKey("UntaxedNet"))
-                            c.ImporteConceptosNoIntegranElNetoGravado = excelReader.GetSafeDouble((int)indexes["UntaxedNet"]);
-                        if (indexes.ContainsKey("GrossIncome"))
-                        {
-                            foreach (int i in indexes["GrossIncome"])
-                            {
-                                c.ImporteIngresosBrutos += excelReader.GetSafeDouble(i);
-                            }
-                        }
-                        if (indexes.ContainsKey("InternalTaxes"))
-                            c.ImporteImpuestosInternos = excelReader.GetSafeDouble((int)indexes["InternalTaxes"]);
-                        if (indexes.ContainsKey("Total"))
-                            c.ImporteTotal = excelReader.GetSafeDouble((int)indexes["Total"]);
-
-                        if (c.Tipo == TipoComprobante.FACTURAS_C || c.Tipo == TipoComprobante.NOTAS_DE_CREDITO_C)
-                        {
-                            c.ImporteConceptosNoIntegranElNetoGravado = 0;
-                            c.CantidadAlicuotasIVA = 0;
-                        }
-                        else
-                            c.CantidadAlicuotasIVA = (ushort)c.Alicuotas.Count;
-
-                        // Verificar si es nota de credito de cualquier tipo...
-
-                        if (c.EsValido)
-                            comprobantes.Add(c);
                     }
+
+                    if (indexes["Aliquots"].Count > 0)
+                    {
+                        foreach (KeyValuePair<string, int> item in indexes["Aliquots"])
+                        {
+                            var importeNeto = excelReader.GetSafeDouble(item.Value);
+
+                            if (importeNeto <= 0)
+                                continue;
+
+                            dynamic a = null;
+
+                            switch (SettingsManager.CurrentBookType)
+                            {
+                                case TiposLibro.COMPRAS:
+                                    a = new AlicuotaCompra()
+                                    {
+                                        TipoComprobante = c.Tipo,
+                                        PuntoDeVenta = c.PuntoDeVenta,
+                                        NumeroComprobante = c.Numero,
+                                        CodigoDocumentoContratante = c.CodigoDocumentoContratante,
+                                        NumeroIdentificacionContratante = c.NumeroIdentificacionContratante,
+                                        ImporteNeto = importeNeto
+                                    };
+                                    break;
+                                case TiposLibro.VENTAS:
+                                    a = new AlicuotaVenta()
+                                    {
+                                        TipoComprobante = c.Tipo,
+                                        PuntoDeVenta = c.PuntoDeVenta,
+                                        NumeroComprobante = c.Numero,
+                                        ImporteNeto = importeNeto
+                                    };
+                                    break;
+                            }
+
+                            switch (item.Key)
+                            {
+                                case "21":
+                                    a.Porcentaje = 21d;
+                                    break;
+                                case "105":
+                                    a.Porcentaje = 10.5d;
+                                    break;
+                                case "27":
+                                    a.Porcentaje = 27d;
+                                    break;
+                                case "5":
+                                    a.Porcentaje = 5d;
+                                    break;
+                                case "250":
+                                    a.Porcentaje = 2.5d;
+                                    break;
+                                case "0":
+                                    a.Porcentaje = 0;
+                                    break;
+                            }
+
+                            c.Alicuotas.Add(a);
+                        }
+                    }
+
+                    if (indexes.ContainsKey("UntaxedNet"))
+                        c.ImporteConceptosNoIntegranElNetoGravado = excelReader.GetSafeDouble((int)indexes["UntaxedNet"]);
+                    if (indexes.ContainsKey("GrossIncome"))
+                    {
+                        foreach (int i in indexes["GrossIncome"])
+                        {
+                            c.ImporteIngresosBrutos += excelReader.GetSafeDouble(i);
+                        }
+                    }
+                    if (indexes.ContainsKey("InternalTaxes"))
+                        c.ImporteImpuestosInternos = excelReader.GetSafeDouble((int)indexes["InternalTaxes"]);
+                    if (indexes.ContainsKey("Total"))
+                        c.ImporteTotal = excelReader.GetSafeDouble((int)indexes["Total"]);
+
+                    if (c.Tipo == TipoComprobante.FACTURAS_C || c.Tipo == TipoComprobante.NOTAS_DE_CREDITO_C)
+                    {
+                        c.ImporteConceptosNoIntegranElNetoGravado = 0;
+                        c.CantidadAlicuotasIVA = 0;
+                    }
+                    else
+                        c.CantidadAlicuotasIVA = (ushort)c.Alicuotas.Count;
+
+                    // Verificar si es nota de credito de cualquier tipo...
+
+                    if (c.EsValido)
+                        comprobantes.Add(c);
                 }
 
                 excelReader.Close();
@@ -685,7 +678,7 @@ namespace SiAp_Parser
             }
             catch (Exception ex)
             {
-                string msg = "Ocurrió un error al procesar el archivo" + Environment.NewLine + Environment.NewLine + ex.Message;
+                var msg = "Ocurrió un error al procesar el archivo" + Environment.NewLine + Environment.NewLine + ex.Message;
 #if DEBUG
                 msg += string.Format(Environment.NewLine + "StackTrace: {0}", ex.StackTrace);
 #endif
@@ -703,9 +696,9 @@ namespace SiAp_Parser
             #endregion
             #endregion
 
-            if (settingsMgr.CurrentSettings.ShowResults.Value)
+            if (SettingsManager.CurrentSettings.ShowResults.Value)
             {
-                int i = 0;
+                var i = 0;
                 var resultsForm = new ResultsForm();
 
                 foreach (Comprobante c in comprobantes)
@@ -733,53 +726,47 @@ namespace SiAp_Parser
                 if (logs == null)
                     return;
 
-                if (settingsMgr.CurrentSettings.AutoSaveLogs.Value)
+                if (SettingsManager.CurrentSettings.AutoSaveLogs.Value)
                 {
-                    settingsMgr.OutputConfig.FileName = "vouchers.txt";
-                    settingsMgr.OutputConfig.FileName = "aliquots.txt";
-                    File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["aliquots"]["log"]);
+                    SettingsManager.OutputConfig.FileName = "vouchers.txt";
+                    SettingsManager.OutputConfig.FileName = "aliquots.txt";
+                    File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
                 }
                 else
                 {
-                    var sfd = new SaveFileDialog();
-
-                    sfd.Filter = settingsMgr.OutputConfig.DialogFilter;
-                    sfd.Title = settingsMgr.OutputConfig.VouchersSaveFileDialogTitle;
-                    sfd.InitialDirectory = settingsMgr.OutputConfig.Directory;
-                    sfd.FileName = string.Concat(settingsMgr.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", settingsMgr.OutputConfig.DefaultFileName, ".txt");
+                    var sfd = new SaveFileDialog
+                    {
+                        Filter = SettingsManager.OutputConfig.DialogFilter,
+                        Title = SettingsManager.OutputConfig.VouchersSaveFileDialogTitle,
+                        InitialDirectory = SettingsManager.OutputConfig.Directory,
+                        FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", OutputConfig.DefaultFileName, ".txt")
+                    };
 
                     if (sfd.ShowDialog() != DialogResult.OK)
                         return;
 
-                    try
-                    {
-                        settingsMgr.OutputConfig.FileName = sfd.FileName;
+                    SettingsManager.OutputConfig.FileName = sfd.FileName;
 
-                        File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["vouchers"]["log"]);
+                    File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["vouchers"]["log"]);
 
-                        sfd.Title = settingsMgr.OutputConfig.AliquotsSaveFileDialogTitle;
-                        sfd.InitialDirectory = Directory.GetParent(sfd.FileName).FullName;
-                        sfd.FileName = string.Concat(settingsMgr.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", settingsMgr.OutputConfig.DefaultFileName, ".txt");
+                    sfd.Title = SettingsManager.OutputConfig.AliquotsSaveFileDialogTitle;
+                    sfd.InitialDirectory = Directory.GetParent(sfd.FileName).FullName;
+                    sfd.FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", OutputConfig.DefaultFileName, ".txt");
 
-                        if (sfd.ShowDialog() != DialogResult.OK)
-                            return;
+                    if (sfd.ShowDialog() != DialogResult.OK)
+                        return;
 
-                        settingsMgr.OutputConfig.FileName = sfd.FileName;
+                    SettingsManager.OutputConfig.FileName = sfd.FileName;
 
-                        File.WriteAllText(settingsMgr.OutputConfig.FilePath, logs["aliquots"]["log"]);
+                    File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
 
-                        MessageBox.Show
-                        (
-                            string.Format("{0} comprobantes generados, {1} alicuotas generadas", logs["vouchers"]["amount"], logs["aliquots"]["amount"]),
-                            "Información",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        throw;
-                    }
+                    MessageBox.Show
+                    (
+                        $"{logs["vouchers"]["amount"]} comprobantes generados, {logs["aliquots"]["amount"]} alicuotas generadas",
+                        "Información",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
             }
         }
@@ -787,46 +774,52 @@ namespace SiAp_Parser
         // http://stackoverflow.com/questions/24338735/check-if-the-all-values-of-array-are-different
         private bool CheckIndexesEquality(Dictionary<string, dynamic> indexes)
         {
-            List<int> values = new List<int>();
+            var values = new List<int>();
 
             foreach (var item in indexes.Values)
             {
-                if (item is int)
+                switch (item)
                 {
-                    values.Add(item);
-                }
-                else if (item is decimal)
-                {
-                    values.Add((int)item);
-                }
-                else if (item is IEnumerable)
-                {
-                    var isDictionary = item is Dictionary<string, int>;
-                    foreach (var subitem in item)
-                    {
-                        values.Add(Convert.ToInt32(isDictionary ? subitem.Value : subitem));
-                    }
+                    case int _:
+                        values.Add(item);
+                        break;
+                    case decimal _:
+                        values.Add((int)item);
+                        break;
+                    case IEnumerable _:
+                        var isDictionary = item is Dictionary<string, int>;
+
+                        foreach (var subitem in item)
+                            values.Add(Convert.ToInt32(isDictionary ? subitem.Value : subitem));
+
+                        break;
                 }
             }
 
-            return !(values.Distinct().Count() == values.Count);
+            return values.Distinct().Count() != values.Count;
         }
 
         private void btnSaveDocumentSettings_Click(object sender, EventArgs e)
         {
-            var sfd = new SaveFileDialog();
+            var sfd = new SaveFileDialog
+            {
+                Filter = SettingsManager.IndexesConfig.DialogFilter,
+                Title = SettingsManager.IndexesConfig.SaveFileDialogTitle,
+                InitialDirectory = SettingsManager.IndexesConfig.Directory,
+                FileName = string.Concat(SettingsManager.IndexesConfig.IndexFileDefaultName, "_", SettingsManager.CurrentBookType.ToString())
+            };
 
-            sfd.Filter = settingsMgr.IndexesConfig.DialogFilter;
-            sfd.Title = settingsMgr.IndexesConfig.SaveFileDialogTitle;
-            sfd.InitialDirectory = settingsMgr.IndexesConfig.Directory;
-            sfd.FileName = string.Concat(settingsMgr.IndexesConfig.IndexFileDefaultName, "_", settingsMgr.CurrentBookType.ToString());
 
             if (sfd.ShowDialog() != DialogResult.OK)
                 return;
 
-            var documentSettings = new DocumentSettings();
-
-            documentSettings.SalesPointAndVoucherNumberInTheSameColumn.Value = cbSalesPointAndVoucherNumberInTheSameColumn.Checked;
+            var documentSettings = new DocumentSettings
+            {
+                SalesPointAndVoucherNumberInTheSameColumn =
+                {
+                    Value = cbSalesPointAndVoucherNumberInTheSameColumn.Checked
+                }
+            };
 
             var indexes = new Indexes
             {
@@ -842,16 +835,16 @@ namespace SiAp_Parser
                 Total = new Index(nudTotal.Value, cbTotal.Checked),
                 Aliquots = new List<Serialization.Alicuota>()
                     {
-                        { new Serialization.Alicuota(21, nudAliquot21.Value, cbAliquot21.Checked) },
-                        { new Serialization.Alicuota(10.5m, nudAliquot105.Value, cbAliquot105.Checked) },
-                        { new Serialization.Alicuota(27, nudAliquot27.Value, cbAliquot27.Checked)},
-                        { new Serialization.Alicuota(5, nudAliquot5.Value, cbAliquot5.Checked)},
-                        { new Serialization.Alicuota(2.5m, nudAliquot250.Value, cbAliquot250.Checked)},
-                        { new Serialization.Alicuota(0, nudAliquot0.Value, cbAliquot0.Checked)},
+                        new Serialization.Alicuota(21, nudAliquot21.Value, cbAliquot21.Checked),
+                        new Serialization.Alicuota(10.5m, nudAliquot105.Value, cbAliquot105.Checked),
+                        new Serialization.Alicuota(27, nudAliquot27.Value, cbAliquot27.Checked),
+                        new Serialization.Alicuota(5, nudAliquot5.Value, cbAliquot5.Checked),
+                        new Serialization.Alicuota(2.5m, nudAliquot250.Value, cbAliquot250.Checked),
+                        new Serialization.Alicuota(0, nudAliquot0.Value, cbAliquot0.Checked),
                     }
             };
 
-            switch (settingsMgr.CurrentSettings.LastBookTypeUsed.Value)
+            switch (SettingsManager.CurrentSettings.LastBookTypeUsed.Value)
             {
                 case TiposLibro.COMPRAS:
                     indexes = new BuysIndexes(indexes)
@@ -876,9 +869,9 @@ namespace SiAp_Parser
 
             documentSettings.Indexes = indexes;
 
-            byte[] oldHash = File.Exists(sfd.FileName) ? sfd.FileName.GetFileHash() : new byte[] { };
+            var oldHash = File.Exists(sfd.FileName) ? sfd.FileName.GetFileHash() : new byte[] { };
 
-            string xml = documentSettings.SerializeToXML();
+            var xml = documentSettings.SerializeToXML();
 
             try
             {
@@ -900,16 +893,17 @@ namespace SiAp_Parser
 
         private void btnLoadDocumentSettings_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog();
-
-            ofd.Filter = settingsMgr.IndexesConfig.DialogFilter;
-            ofd.Title = settingsMgr.IndexesConfig.OpenFileDialogTitle;
-            ofd.InitialDirectory = settingsMgr.IndexesConfig.Directory;
+            var ofd = new OpenFileDialog
+            {
+                Filter = SettingsManager.IndexesConfig.DialogFilter,
+                Title = SettingsManager.IndexesConfig.OpenFileDialogTitle,
+                InitialDirectory = SettingsManager.IndexesConfig.Directory
+            };
 
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
 
-            settingsMgr.CurrentIndexesPath = ofd.FileName;
+            SettingsManager.CurrentIndexesPath = ofd.FileName;
 
             try
             {
@@ -917,7 +911,7 @@ namespace SiAp_Parser
 
                 RestoreDocumentSettings(ds);
 
-            Text = string.Concat("SiAp Parser", " - ", ofd.FileName);
+                Text = string.Concat("SiAp Parser", " - ", ofd.FileName);
 
                 MessageBox.Show("Preferencias cargadas con éxito", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -936,7 +930,7 @@ namespace SiAp_Parser
             if (!cb.Enabled || !cb.Checked || !nud.Enabled)
                 return null;
 
-            int i = (int)nud.Value;
+            var i = (int)nud.Value;
 
             return i;
         }
@@ -951,7 +945,7 @@ namespace SiAp_Parser
 
             var indexes = Regex.Replace(txtBox.Text, @"\s+", string.Empty).Split(',');
 
-            return indexes.Select(n => int.Parse(n)).ToList();
+            return indexes.Select(int.Parse).ToList();
         }
 
         /// <summary>
@@ -1004,37 +998,37 @@ namespace SiAp_Parser
 
             #region Buys indexes
 
-            if (i is BuysIndexes bi)
+            switch (i)
             {
-                cbImportClearance.Checked = nudImportClearance.Enabled = bi.ImportClearance.Enabled;
-                cbVATPerceptionsAmount.Checked = nudVATPerceptionsAmount.Enabled = bi.VATPerceptionsAmount.Enabled;
-                cbComputableTaxCredit.Checked = nudComputableTaxCredit.Enabled = bi.ComputableTaxCredit.Enabled;
-                cbCUITIssuer.Checked = nudCUITIssuer.Enabled = bi.CUITIssuer.Enabled;
-                cbIssuerName.Checked = nudIssuerName.Enabled = bi.IssuerName.Enabled;
-                cbVATCommission.Checked = nudVATCommission.Enabled = bi.VATCommission.Enabled;
+                case BuysIndexes bi:
+                    cbImportClearance.Checked = nudImportClearance.Enabled = bi.ImportClearance.Enabled;
+                    cbVATPerceptionsAmount.Checked = nudVATPerceptionsAmount.Enabled = bi.VATPerceptionsAmount.Enabled;
+                    cbComputableTaxCredit.Checked = nudComputableTaxCredit.Enabled = bi.ComputableTaxCredit.Enabled;
+                    cbCUITIssuer.Checked = nudCUITIssuer.Enabled = bi.CUITIssuer.Enabled;
+                    cbIssuerName.Checked = nudIssuerName.Enabled = bi.IssuerName.Enabled;
+                    cbVATCommission.Checked = nudVATCommission.Enabled = bi.VATCommission.Enabled;
 
-                nudImportClearance.Value = bi.ImportClearance.Number;
-                nudVATPerceptionsAmount.Value = bi.VATPerceptionsAmount.Number;
-                nudComputableTaxCredit.Value = bi.ComputableTaxCredit.Number;
-                nudCUITIssuer.Value = bi.CUITIssuer.Number;
-                nudIssuerName.Value = bi.IssuerName.Number;
-                nudVATCommission.Value = bi.VATCommission.Number;
+                    nudImportClearance.Value = bi.ImportClearance.Number;
+                    nudVATPerceptionsAmount.Value = bi.VATPerceptionsAmount.Number;
+                    nudComputableTaxCredit.Value = bi.ComputableTaxCredit.Number;
+                    nudCUITIssuer.Value = bi.CUITIssuer.Number;
+                    nudIssuerName.Value = bi.IssuerName.Number;
+                    nudVATCommission.Value = bi.VATCommission.Number;
+                    break;
+                case SalesIndexes si:
+                    cbVoucherNumberUntil.Checked = nudVoucherNumberUntil.Enabled = si.VoucherNumberUntil.Enabled;
+                    cbUncategorizedPerceptionAmount.Checked = nudUncategorizedPerceptionAmount.Enabled = si.UncategorizedPerceptionAmount.Enabled;
+                    cbPaymentExpireDate.Checked = nudPaymentExpireDate.Enabled = si.PaymentExpireDate.Enabled;
+
+                    nudVoucherNumberUntil.Value = si.VoucherNumberUntil.Number;
+                    nudUncategorizedPerceptionAmount.Value = si.UncategorizedPerceptionAmount.Number;
+                    nudPaymentExpireDate.Value = si.PaymentExpireDate.Number;
+                    break;
             }
 
             #endregion
 
             #region Sales indexes
-
-            if (i is SalesIndexes si)
-            {
-                cbVoucherNumberUntil.Checked = nudVoucherNumberUntil.Enabled = si.VoucherNumberUntil.Enabled;
-                cbUncategorizedPerceptionAmount.Checked = nudUncategorizedPerceptionAmount.Enabled = si.UncategorizedPerceptionAmount.Enabled;
-                cbPaymentExpireDate.Checked = nudPaymentExpireDate.Enabled = si.PaymentExpireDate.Enabled;
-
-                nudVoucherNumberUntil.Value = si.VoucherNumberUntil.Number;
-                nudUncategorizedPerceptionAmount.Value = si.UncategorizedPerceptionAmount.Number;
-                nudPaymentExpireDate.Value = si.PaymentExpireDate.Number;
-            }
 
             #endregion
 
@@ -1169,9 +1163,9 @@ namespace SiAp_Parser
 
         private void cmbTipo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settingsMgr.CurrentBookType = (TiposLibro)((ComboBoxItem)((ComboBox)sender).SelectedItem).Value;
+            SettingsManager.CurrentBookType = (TiposLibro)((ComboBoxItem)((ComboBox)sender).SelectedItem).Value;
 
-            switch (settingsMgr.CurrentBookType)
+            switch (SettingsManager.CurrentBookType)
             {
                 case TiposLibro.COMPRAS:
                     tabSalesIndexes.Enabled = false;
@@ -1197,10 +1191,21 @@ namespace SiAp_Parser
         {
             foreach (Control ctrl in Controls)
             {
-                if (ctrl is Label || ctrl is Button) continue;
-                if (ctrl is ComboBox) ((ComboBox)ctrl).SelectedIndex = 0;
-                if (ctrl is TextBox) ctrl.Text = string.Empty;
-                if (ctrl is NumericUpDown) ((NumericUpDown)ctrl).Value = 0;
+                switch (ctrl)
+                {
+                    case Label _:
+                    case Button _:
+                        continue;
+                    case ComboBox _:
+                        ((ComboBox)ctrl).SelectedIndex = 0;
+                        break;
+                    case TextBox _:
+                        ctrl.Text = string.Empty;
+                        break;
+                    case NumericUpDown _:
+                        ((NumericUpDown)ctrl).Value = 0;
+                        break;
+                }
             }
 
             tabCtrlSettings.Visible = btnProcessFile.Enabled = false;
@@ -1269,20 +1274,18 @@ namespace SiAp_Parser
 
         private void cbAutodetectIndexes_Click(object sender, EventArgs e)
         {
-            string input =
+            var input =
                 Interaction.InputBox
                 (
                     "Por favor ingrese el índice (basado en 0) de la fila en la que se encuetran las cabeceras de la tabla",
                     "Atención",
-                    "0",
-                    -1,
-                    -1
+                    "0"
                 );
 
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
                 return;
 
-            int headersIndex = int.Parse(input);
+            var headersIndex = int.Parse(input);
 
             if (headersIndex < 0)
                 return;
@@ -1292,15 +1295,13 @@ namespace SiAp_Parser
                 (
                     "Por favor ingrese la cantidad de columnas de la tabla",
                     "Atención",
-                    "2",
-                    -1,
-                    -1
+                    "2"
                 );
 
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
                 return;
 
-            int columnsAmount = int.Parse(input);
+            var columnsAmount = int.Parse(input);
 
             if (columnsAmount < 2)
                 return;
@@ -1310,14 +1311,14 @@ namespace SiAp_Parser
                 var excelReader = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).GetExcelDataReader();
                 var dic = new Dictionary<string, int>();
 
-                for (int i = 0; i <= headersIndex; i++)
+                for (var i = 0; i <= headersIndex; i++)
                     excelReader.Read();
 
-                for (int i = 0; i <= columnsAmount; i++)
+                for (var i = 0; i <= columnsAmount; i++)
                 {
                     try
                     {
-                        string lec = Regex.Replace(excelReader.GetSafeString(i).ToLower(), @"[.%]", string.Empty).Trim();
+                        var lec = Regex.Replace(excelReader.GetSafeString(i).ToLower(), @"[.%]", string.Empty).Trim();
 
                         if (string.IsNullOrEmpty(lec) || string.IsNullOrWhiteSpace(lec))
                             continue;

@@ -28,7 +28,7 @@ namespace SiAp_Parser
             sb.Append(Tipo.ToString("D4"));
             sb.Append(ImpuestoLiquidado.ToSIApFormat());
 
-            string alicuotaStr = sb.ToString();
+            var alicuotaStr = sb.ToString();
 
             if (alicuotaStr.Length != CANTIDAD_CARACTERES_ALICUOTAS_COMPRAS)
             {
@@ -48,11 +48,12 @@ namespace SiAp_Parser
         private double _importeNeto;
         public double ImporteNeto
         {
-            get { return _importeNeto; }
+            get => _importeNeto;
             set
             {
                 if (value < 0)
                     return;
+
                 _importeNeto = value;
             }
         }
@@ -61,7 +62,7 @@ namespace SiAp_Parser
         private double _porcentaje;
         public double Porcentaje
         {
-            get { return _porcentaje; }
+            get => _porcentaje;
             set
             {
                 // https://bytes.com/topic/c-sharp/answers/255776-switch-expression-does-not-work-float-types
@@ -95,10 +96,7 @@ namespace SiAp_Parser
             }
         }
 
-        public double ImpuestoLiquidado
-        {
-            get { return ImporteNeto * Porcentaje; }
-        }
+        public double ImpuestoLiquidado => ImporteNeto * Porcentaje;
 
         private const ushort CANTIDAD_CARACTERES_ALICUOTAS_COMPRAS = 84;
     }

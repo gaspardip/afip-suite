@@ -25,7 +25,7 @@ namespace SiAp_Parser.Extensions
         /// <returns></returns>
         public static bool LessThan(this double double1, double double2, int precision)
         {
-            return (Math.Round(double1 - double2, precision) < 0);
+            return Math.Round(double1 - double2, precision) < 0;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace SiAp_Parser.Extensions
         /// <returns></returns>
         public static bool LessThanOrEqualTo(this double double1, double double2, int precision)
         {
-            return (Math.Round(double1 - double2, precision) <= 0);
+            return Math.Round(double1 - double2, precision) <= 0;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace SiAp_Parser.Extensions
         /// <returns></returns>
         public static bool GreaterThan(this double double1, double double2, int precision)
         {
-            return (Math.Round(double1 - double2, precision) > 0);
+            return Math.Round(double1 - double2, precision) > 0;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SiAp_Parser.Extensions
         /// <returns></returns>
         public static bool GreaterThanOrEqualTo(this double double1, double double2, int precision)
         {
-            return (Math.Round(double1 - double2, precision) >= 0);
+            return Math.Round(double1 - double2, precision) >= 0;
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace SiAp_Parser.Extensions
         /// <returns></returns>
         public static bool AlmostEquals(this double double1, double double2, int precision)
         {
-            return (Math.Round(double1 - double2, precision) == 0);
+            return Math.Round(double1 - double2, precision) == 0;
         }
     }
 }

@@ -24,13 +24,12 @@ namespace SiAp_Parser.Serialization
             Total = new Index(12, true);
             Aliquots = new List<Alicuota>()
             {
-                { new Alicuota(21, 6, true) },
-                { new Alicuota(10.5m, 7, true) },
-                { new Alicuota(27m, 8, true ) },
-                { new Alicuota(5, 9, false) },
-                { new Alicuota(2.5m, 10, false) },
-                { new Alicuota(0, 11, false) }
-
+                new Alicuota(21, 6, true),
+                new Alicuota(10.5m, 7, true),
+                new Alicuota(27m, 8, true ),
+                new Alicuota(5, 9, false),
+                new Alicuota(2.5m, 10, false),
+                new Alicuota(0, 11, false)
             };
             Type = TiposLibro.UNDEFINED;
         }

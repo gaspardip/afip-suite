@@ -86,7 +86,7 @@ namespace SiAp_Parser.Models
 
         #region Properties
 
-        public new bool EsValido { get { return this.VerificarValidez(); } }
+        public new bool EsValido => this.VerificarValidez();
 
         private bool VerificarValidez()
         {

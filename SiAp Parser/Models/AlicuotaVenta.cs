@@ -21,7 +21,7 @@ namespace SiAp_Parser.Models
             sb.Append(this.Tipo.ToString("D4"));
             sb.Append(this.ImpuestoLiquidado.ToSIApFormat());
 
-            string alicuotaStr = sb.ToString();
+            var alicuotaStr = sb.ToString();
 
             if(alicuotaStr.Length != CANTIDAD_CARACTERES_ALICUOTAS_VENTAS)
             {

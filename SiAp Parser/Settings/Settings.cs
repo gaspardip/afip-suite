@@ -35,36 +35,33 @@ namespace SiAp_Parser.Settings
                 return false;
 
             return
-                (ValidateRowsBasedOnDate.Value == s.ValidateRowsBasedOnDate.Value) &&
-                (GenerateVouchersNumbersIfMissing.Value == s.GenerateVouchersNumbersIfMissing.Value) &&
-                (LoadLastIndexesUsed.Value == s.LoadLastIndexesUsed.Value) &&
-                (LastDocumentSettingsPath.Value == s.LastDocumentSettingsPath.Value) &&
-                (LastBookTypeUsed.Value == s.LastBookTypeUsed.Value) &&
-                (SaveOnExit.Value == s.SaveOnExit.Value) &&
-                (ShowResults.Value == s.ShowResults.Value) &&
-                (OutputPath.Value == s.OutputPath.Value) &&
-                (AutoSaveLogs.Value == s.AutoSaveLogs.Value) &&
-                (GetMissingFieldsAutomatically.Value == s.GetMissingFieldsAutomatically.Value);
+                ValidateRowsBasedOnDate.Value == s.ValidateRowsBasedOnDate.Value &&
+                GenerateVouchersNumbersIfMissing.Value == s.GenerateVouchersNumbersIfMissing.Value &&
+                LoadLastIndexesUsed.Value == s.LoadLastIndexesUsed.Value &&
+                LastDocumentSettingsPath.Value == s.LastDocumentSettingsPath.Value &&
+                LastBookTypeUsed.Value == s.LastBookTypeUsed.Value &&
+                SaveOnExit.Value == s.SaveOnExit.Value &&
+                ShowResults.Value == s.ShowResults.Value &&
+                OutputPath.Value == s.OutputPath.Value &&
+                AutoSaveLogs.Value == s.AutoSaveLogs.Value &&
+                GetMissingFieldsAutomatically.Value == s.GetMissingFieldsAutomatically.Value;
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() => base.GetHashCode();
 
         public override string ToString()
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine(string.Format("ValidateRowsBasedOnDate: {0}", ValidateRowsBasedOnDate));
-            sb.AppendLine(string.Format("GenerateVouchersNumbersIfMissing: {0}", GenerateVouchersNumbersIfMissing));
-            sb.AppendLine(string.Format("LoadLastIndexesUsed: {0}", LoadLastIndexesUsed));
-            sb.AppendLine(string.Format("LastIndexesUsedPath: {0}", LastDocumentSettingsPath));
-            sb.AppendLine(string.Format("LastBookTypeUsed: {0}", LastBookTypeUsed));
-            sb.AppendLine(string.Format("SaveOnExit: {0}", SaveOnExit));
-            sb.AppendLine(string.Format("ShowResults: {0}", ShowResults));
-            sb.AppendLine(string.Format("OutputPath: {0}", OutputPath));
-            sb.AppendLine(string.Format("OutputPath: {0}", GetMissingFieldsAutomatically));
+            sb.AppendLine($"ValidateRowsBasedOnDate: {ValidateRowsBasedOnDate}");
+            sb.AppendLine($"GenerateVouchersNumbersIfMissing: {GenerateVouchersNumbersIfMissing}");
+            sb.AppendLine($"LoadLastIndexesUsed: {LoadLastIndexesUsed}");
+            sb.AppendLine($"LastIndexesUsedPath: {LastDocumentSettingsPath}");
+            sb.AppendLine($"LastBookTypeUsed: {LastBookTypeUsed}");
+            sb.AppendLine($"SaveOnExit: {SaveOnExit}");
+            sb.AppendLine($"ShowResults: {ShowResults}");
+            sb.AppendLine($"OutputPath: {OutputPath}");
+            sb.AppendLine($"OutputPath: {GetMissingFieldsAutomatically}");
 
             return sb.ToString();
         }

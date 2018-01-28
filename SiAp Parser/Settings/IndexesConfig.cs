@@ -18,6 +18,6 @@ namespace SiAp_Parser.Settings
         public string OpenFileDialogTitle { get; set; }
         public string SaveFileDialogTitle { get; set; }
         public string Directory { get; set; }
-        public string IndexFileDefaultName { get { return DateTime.Now.ToString("yyyyMMddHHmmss"); } }
+        public string IndexFileDefaultName => DateTime.Now.ToString("yyyyMMddHHmmss");
     }
 }

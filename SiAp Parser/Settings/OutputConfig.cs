@@ -19,7 +19,7 @@ namespace SiAp_Parser.Settings
         private string _fileName;
         public string FileName
         {
-            get { return _fileName; }
+            get => _fileName;
             set
             {
                 _fileName = value;
@@ -28,7 +28,7 @@ namespace SiAp_Parser.Settings
         }
         public string FilePath { get; private set; }
         public string DialogFilter { get; set; }
-        public string DefaultFileName { get { return DateTime.Now.ToString("yyyyMMddHHmmss"); } }
+        public static string DefaultFileName => DateTime.Now.ToString("yyyyMMddHHmmss");
         public string VouchersSaveFileDialogTitle { get; set; }
         public string AliquotsSaveFileDialogTitle { get; set; }
     }

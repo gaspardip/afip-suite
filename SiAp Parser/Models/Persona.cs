@@ -16,7 +16,7 @@ namespace SiAp_Parser.Models
         private string _denominacion;
         public string Denominacion
         {
-            get { return _denominacion; }
+            get => _denominacion;
             set
             {
                 if (string.IsNullOrEmpty(value))

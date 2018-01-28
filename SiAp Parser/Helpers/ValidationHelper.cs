@@ -15,9 +15,9 @@ namespace SiAp_Parser.Helpers
             var digito = digitos.Last();
 
             for (var i = 0; i < digitos.Length - 1; i++)
-                acumulado += digitos[9 - i] * (2 + (i % 6));
+                acumulado += digitos[9 - i] * (2 + i % 6);
 
-            var verif = 11 - (acumulado % 11);
+            var verif = 11 - acumulado % 11;
 
             if (verif == 11)
                 verif = 0;
