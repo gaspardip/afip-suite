@@ -911,13 +911,21 @@ namespace SiAp_Parser
 
             settingsMgr.CurrentIndexesPath = ofd.FileName;
 
-            var ds = SerializationHelpers.Deserialize<DocumentSettings>(ofd.FileName);
+            try
+            {
+                var ds = SerializationHelpers.Deserialize<DocumentSettings>(ofd.FileName);
 
-            RestoreDocumentSettings(ds);
+                RestoreDocumentSettings(ds);
 
             Text = string.Concat("SiAp Parser", " - ", ofd.FileName);
 
-            MessageBox.Show("Preferencias cargadas con éxito", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Preferencias cargadas con éxito", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex);
+                MessageBox.Show("Error al cargar las preferencias", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private int? GenerateIndex(CheckBox cb, NumericUpDown nud)
