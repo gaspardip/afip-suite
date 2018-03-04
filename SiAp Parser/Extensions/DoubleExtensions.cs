@@ -5,9 +5,11 @@ namespace SiAp_Parser.Extensions
     public static class DoubleExtensions
     {
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <param name="padLeftWidth"></param>
         /// <returns></returns>
         public static string ToSIApFormat(this double value, string format = "0.00", int padLeftWidth = 15)
         {

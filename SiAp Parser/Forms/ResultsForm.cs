@@ -17,7 +17,8 @@ namespace SiAp_Parser
 
         private void ResultsForm_Load(object sender, EventArgs e)
         {
-            decimal c, t = 0;
+            decimal c = 0;
+            decimal t = 0;
 
             for (var i = 0; i < dgvResults.Rows.Count; ++i)
             {
@@ -26,6 +27,11 @@ namespace SiAp_Parser
             }
 
             lblTotalImport.Text = Math.Round(t, 2).ToString();
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

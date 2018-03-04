@@ -8,10 +8,10 @@ namespace SiAp_Parser.Settings
     {
         public IndexesConfig()
         {
-            this.DialogFilter = "Archivos XML|*.xml";
-            this.SaveFileDialogTitle = "Guardar preferencias";
-            this.OpenFileDialogTitle = "Cargar preferencias";
-            this.Directory = Path.Combine(Application.StartupPath, "Indices");
+            DialogFilter = "Archivos XML|*.xml";
+            SaveFileDialogTitle = "Guardar preferencias";
+            OpenFileDialogTitle = "Cargar preferencias";
+            Directory = Path.Combine(Application.StartupPath, "Indices");
         }
 
         public string DialogFilter { get; set; }

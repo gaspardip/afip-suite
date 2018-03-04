@@ -12,28 +12,28 @@ namespace SiAp_Parser.Settings
 
         public SettingsManager()
         {
-            this.PreferencesConfig = new PreferencesConfig();
+            PreferencesConfig = new PreferencesConfig();
 
-            if (!Directory.Exists(this.PreferencesConfig.Directory))
-                Directory.CreateDirectory(this.PreferencesConfig.Directory);
+            if (!Directory.Exists(PreferencesConfig.Directory))
+                Directory.CreateDirectory(PreferencesConfig.Directory);
 
-            this.IndexesConfig = new IndexesConfig();
+            IndexesConfig = new IndexesConfig();
 
-            if (!Directory.Exists(this.IndexesConfig.Directory))
-                Directory.CreateDirectory(this.IndexesConfig.Directory);
+            if (!Directory.Exists(IndexesConfig.Directory))
+                Directory.CreateDirectory(IndexesConfig.Directory);
 
-            this.OutputConfig = new OutputConfig();
+            OutputConfig = new OutputConfig();
 
-            if (!Directory.Exists(this.OutputConfig.Directory))
-                Directory.CreateDirectory(this.OutputConfig.Directory);
+            if (!Directory.Exists(OutputConfig.Directory))
+                Directory.CreateDirectory(OutputConfig.Directory);
 
-            this.CurrentSettings = new Settings();
+            CurrentSettings = new Settings();
         }
 
         public SettingsManager(bool autoLoad) : this()
         {
             if(autoLoad)
-                this.Load();
+                Load();
         }
 
         #endregion
@@ -49,11 +49,11 @@ namespace SiAp_Parser.Settings
         /// </summary>
         public void Load()
         {
-            if (!File.Exists(this.PreferencesConfig.FilePath)) return;
+            if (!File.Exists(PreferencesConfig.FilePath)) return;
 
             try
             {
-                this.CurrentSettings = SerializationHelpers.Deserialize<Settings>(this.PreferencesConfig.FilePath);
+                CurrentSettings = SerializationHelpers.Deserialize<Settings>(PreferencesConfig.FilePath);
             }
             catch (Exception)
             {
@@ -65,21 +65,21 @@ namespace SiAp_Parser.Settings
         {
             var previousHash = new byte[] { };
 
-            if (File.Exists(this.PreferencesConfig.FilePath))
-                previousHash = this.PreferencesConfig.FilePath.GetFileHash();
+            if (File.Exists(PreferencesConfig.FilePath))
+                previousHash = PreferencesConfig.FilePath.GetFileHash();
 
-            var xml = this.CurrentSettings.SerializeToXML();
+            var xml = CurrentSettings.SerializeToXML();
 
             try
             {
-                File.WriteAllText(this.PreferencesConfig.FilePath, xml);
+                File.WriteAllText(PreferencesConfig.FilePath, xml);
             }
             catch (Exception)
             {
                 return false;
             }
 
-            var newHash = this.PreferencesConfig.FilePath.GetFileHash();
+            var newHash = PreferencesConfig.FilePath.GetFileHash();
 
             return previousHash != newHash;
         }
@@ -95,7 +95,7 @@ namespace SiAp_Parser.Settings
         {
             get
             {
-                Settings oldSettings = null;
+                Settings oldSettings;
 
                 try
                 {

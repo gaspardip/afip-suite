@@ -29,10 +29,6 @@
         private void InitializeComponent()
         {
             this.dgvResults = new System.Windows.Forms.DataGridView();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblTotalImport = new System.Windows.Forms.Label();
             this.rowNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VoucherType = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -43,6 +39,10 @@
             this.UntaxedNet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GrossIncome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Total = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblTotalImport = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,42 +69,6 @@
             this.dgvResults.ReadOnly = true;
             this.dgvResults.Size = new System.Drawing.Size(901, 265);
             this.dgvResults.TabIndex = 0;
-            // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(12, 299);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(113, 46);
-            this.btnExport.TabIndex = 1;
-            this.btnExport.Text = "Exportar";
-            this.btnExport.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(346, 299);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Importe total:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(284, 316);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(130, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Importe total crédito fiscal:";
-            // 
-            // lblTotalImport
-            // 
-            this.lblTotalImport.AutoSize = true;
-            this.lblTotalImport.Location = new System.Drawing.Point(420, 299);
-            this.lblTotalImport.Name = "lblTotalImport";
-            this.lblTotalImport.Size = new System.Drawing.Size(10, 13);
-            this.lblTotalImport.TabIndex = 4;
-            this.lblTotalImport.Text = "-";
             // 
             // rowNumber
             // 
@@ -194,6 +158,43 @@
             this.Total.Name = "Total";
             this.Total.ReadOnly = true;
             this.Total.Width = 56;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(12, 299);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(113, 46);
+            this.btnExport.TabIndex = 1;
+            this.btnExport.Text = "Exportar";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(346, 299);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Importe total:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(284, 316);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(130, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Importe total crédito fiscal:";
+            // 
+            // lblTotalImport
+            // 
+            this.lblTotalImport.AutoSize = true;
+            this.lblTotalImport.Location = new System.Drawing.Point(420, 299);
+            this.lblTotalImport.Name = "lblTotalImport";
+            this.lblTotalImport.Size = new System.Drawing.Size(10, 13);
+            this.lblTotalImport.TabIndex = 4;
+            this.lblTotalImport.Text = "-";
             // 
             // ResultsForm
             // 

@@ -29,7 +29,7 @@ namespace SiAp_Parser.Settings
 
         public override bool Equals(object obj)
         {
-            var s = obj as Settings;
+            var s = (Settings)obj;
 
             if (s == null)
                 return false;

@@ -7,9 +7,9 @@ namespace SiAp_Parser.Settings
     {
         public PreferencesConfig()
         {
-            this.Directory = Path.Combine(Application.StartupPath, "Config");
-            this.Filename = "config.xml";
-            this.FilePath = Path.Combine(this.Directory, this.Filename);
+            Directory = Path.Combine(Application.StartupPath, "Config");
+            Filename = "config.xml";
+            FilePath = Path.Combine(Directory, Filename);
         }
 
         public string Directory { get; set; }

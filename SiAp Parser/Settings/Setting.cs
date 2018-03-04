@@ -18,7 +18,7 @@ namespace SiAp_Parser.Settings
 
         public Setting(T value)
         {
-            this.Value = value;
+            Value = value;
         }
 
         [XmlText]

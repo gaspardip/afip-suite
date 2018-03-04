@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SiAp_Parser.Enums;
 using System.Text.RegularExpressions;
+using SiAp_Parser.Enums;
 
 namespace SiAp_Parser.Models
 {
@@ -77,133 +77,135 @@ namespace SiAp_Parser.Models
             get => _tipo;
             set
             {
-                if (value is string)
+                switch (value)
                 {
-                    if (string.IsNullOrEmpty(value))
-                        return;
-
-                    string[] parts;
-                    var finalTypeStr = string.Empty;
-
-                    parts = Regex.Replace(value, @"(["",.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
-                    parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-                    switch (parts.Length)
-                    {
-                        // FA
-                        case 1:
-                            // Fc
-                            switch(parts[0].Length)
-                            {
-                                // Just A...
-                                case 1:
-                                    finalTypeStr = "FC-" + parts[0];
-                                    break;
-                                case 2:
-                                    finalTypeStr = parts[0].Substring(0, 1) + "-" + parts[0].Substring(1, 1);
-                                    break;
-                                case 3:
-                                    finalTypeStr = parts[0].Substring(0, 2) + "-" + parts[0].Substring(2, 1);
-                                    break;
-                                default:
-                                    finalTypeStr = parts[0].Substring(0, 1);
-                                    break;
-                            }
-                            break;
-                        // Factura A
-                        case 2:
-                            // NC A
-                            if (parts[0].Length == 2)
-                                finalTypeStr = parts[0] + "-" + parts[1];
-                            else
-                                finalTypeStr = parts[0].Substring(0, 1) + "-" + parts[1];
-                            break;
-                        // Tique factura A
-                        case 3:
-                            finalTypeStr = parts[0].Substring(0, 1) + parts[1].Substring(0, 1) + "-" + parts[2];
-                            break;
-                        // Nota de crédito A
-                        case 4:
-                            finalTypeStr = parts[0].Substring(0, 1) + parts[2].Substring(0, 1) + "-" + parts[3];
-                            break;
-                        // Nota de venta al contado A
-                        case 5:
-                            finalTypeStr = parts[0].Substring(0, 1) + parts[2].Substring(0, 1) + parts[4].Substring(0, 1) + "-" + parts[5];
-                            break;
-                        default:
-                            _tipo = TipoComprobante.OTROS_COMP_QUE_NO_CUMPLEN_CON_LA_R_G_1415_Y_SUS_MODIF;
+                    case string _:
+                        if (string.IsNullOrEmpty(value))
                             return;
-                    }
 
-                    finalTypeStr = finalTypeStr.ToUpper();
+                        string[] parts;
+                        var finalTypeStr = string.Empty;
 
-                    switch (finalTypeStr)
-                    {
-                        case "T":
-                            _tipo = TipoComprobante.TIQUE;
-                            break;
-                        case "F-A":
-                        case "FC-A":
-                            _tipo = TipoComprobante.FACTURAS_A;
-                            break;
-                        case "ND-A":
-                            _tipo = TipoComprobante.NOTAS_DE_DEBITO_A;
-                            break;
-                        case "NC-A":
-                            _tipo = TipoComprobante.NOTAS_DE_CREDITO_A;
-                            break;
-                        case "R-A":
-                            _tipo = TipoComprobante.RECIBOS_A;
-                            break;
-                        case "NVC-A":
-                            _tipo = TipoComprobante.NOTAS_DE_VENTA_AL_CONTADO_A;
-                            break;
-                        case "TF-A":
-                            _tipo = TipoComprobante.TIQUE_FACTURA_A_CONTROLADORES_FISCALES;
-                            break;
-                        case "F-B":
-                        case "FC-B":
-                            _tipo = TipoComprobante.FACTURAS_B;
-                            break;
-                        case "ND-B":
-                            _tipo = TipoComprobante.NOTAS_DE_DEBITO_B;
-                            break;
-                        case "NC-B":
-                            _tipo = TipoComprobante.NOTAS_DE_CREDITO_B;
-                            break;
-                        case "R-B":
-                            _tipo = TipoComprobante.RECIBOS_B;
-                            break;
-                        case "NVC-B":
-                            _tipo = TipoComprobante.NOTAS_DE_VENTA_AL_CONTADO_B;
-                            break;
-                        case "TF-B":
-                            _tipo = TipoComprobante.TIQUE_FACTURA_B;
-                            break;
-                        case "F-C":
-                        case "FC-C":
-                            _tipo = TipoComprobante.FACTURAS_C;
-                            break;
-                        case "ND-C":
-                            _tipo = TipoComprobante.NOTAS_DE_DEBITO_C;
-                            break;
-                        case "NC-C":
-                            _tipo = TipoComprobante.NOTAS_DE_CREDITO_C;
-                            break;
-                        case "R-C":
-                            _tipo = TipoComprobante.RECIBOS_C;
-                            break;
-                        case "NVC-C":
-                            _tipo = TipoComprobante.NOTAS_DE_VENTA_AL_CONTADO_C;
-                            break;
-                        case "TF-C":
-                            _tipo = TipoComprobante.TIQUE_FACTURA_C;
-                            break;
-                    }
-                }
-                else if (value is TipoComprobante)
-                {
-                    _tipo = value;
+                        parts = Regex.Replace(value, @"(["",.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
+                        parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+                        switch (parts.Length)
+                        {
+                            // FA
+                            case 1:
+                                // Fc
+                                switch(parts[0].Length)
+                                {
+                                    // Just A...
+                                    case 1:
+                                        finalTypeStr = "FC-" + parts[0];
+                                        break;
+                                    case 2:
+                                        finalTypeStr = parts[0].Substring(0, 1) + "-" + parts[0].Substring(1, 1);
+                                        break;
+                                    case 3:
+                                        finalTypeStr = parts[0].Substring(0, 2) + "-" + parts[0].Substring(2, 1);
+                                        break;
+                                    default:
+                                        finalTypeStr = parts[0].Substring(0, 1);
+                                        break;
+                                }
+                                break;
+                            // Factura A
+                            case 2:
+                                // NC A
+                                if (parts[0].Length == 2)
+                                    finalTypeStr = parts[0] + "-" + parts[1];
+                                else
+                                    finalTypeStr = parts[0].Substring(0, 1) + "-" + parts[1];
+                                break;
+                            // Tique factura A
+                            case 3:
+                                finalTypeStr = parts[0].Substring(0, 1) + parts[1].Substring(0, 1) + "-" + parts[2];
+                                break;
+                            // Nota de crédito A
+                            case 4:
+                                finalTypeStr = parts[0].Substring(0, 1) + parts[2].Substring(0, 1) + "-" + parts[3];
+                                break;
+                            // Nota de venta al contado A
+                            case 5:
+                                finalTypeStr = parts[0].Substring(0, 1) + parts[2].Substring(0, 1) + parts[4].Substring(0, 1) + "-" + parts[5];
+                                break;
+                            default:
+                                _tipo = TipoComprobante.OTROS_COMP_QUE_NO_CUMPLEN_CON_LA_R_G_1415_Y_SUS_MODIF;
+                                return;
+                        }
+
+                        finalTypeStr = finalTypeStr.ToUpper();
+
+                        switch (finalTypeStr)
+                        {
+                            case "T":
+                                _tipo = TipoComprobante.TIQUE;
+                                break;
+                            case "F-A":
+                            case "FC-A":
+                                _tipo = TipoComprobante.FACTURAS_A;
+                                break;
+                            case "ND-A":
+                                _tipo = TipoComprobante.NOTAS_DE_DEBITO_A;
+                                break;
+                            case "NC-A":
+                                _tipo = TipoComprobante.NOTAS_DE_CREDITO_A;
+                                break;
+                            case "R-A":
+                                _tipo = TipoComprobante.RECIBOS_A;
+                                break;
+                            case "NVC-A":
+                                _tipo = TipoComprobante.NOTAS_DE_VENTA_AL_CONTADO_A;
+                                break;
+                            case "TF-A":
+                                _tipo = TipoComprobante.TIQUE_FACTURA_A_CONTROLADORES_FISCALES;
+                                break;
+                            case "F-B":
+                            case "FC-B":
+                                _tipo = TipoComprobante.FACTURAS_B;
+                                break;
+                            case "ND-B":
+                                _tipo = TipoComprobante.NOTAS_DE_DEBITO_B;
+                                break;
+                            case "NC-B":
+                                _tipo = TipoComprobante.NOTAS_DE_CREDITO_B;
+                                break;
+                            case "R-B":
+                                _tipo = TipoComprobante.RECIBOS_B;
+                                break;
+                            case "NVC-B":
+                                _tipo = TipoComprobante.NOTAS_DE_VENTA_AL_CONTADO_B;
+                                break;
+                            case "TF-B":
+                                _tipo = TipoComprobante.TIQUE_FACTURA_B;
+                                break;
+                            case "F-C":
+                            case "FC-C":
+                                _tipo = TipoComprobante.FACTURAS_C;
+                                break;
+                            case "ND-C":
+                                _tipo = TipoComprobante.NOTAS_DE_DEBITO_C;
+                                break;
+                            case "NC-C":
+                                _tipo = TipoComprobante.NOTAS_DE_CREDITO_C;
+                                break;
+                            case "R-C":
+                                _tipo = TipoComprobante.RECIBOS_C;
+                                break;
+                            case "NVC-C":
+                                _tipo = TipoComprobante.NOTAS_DE_VENTA_AL_CONTADO_C;
+                                break;
+                            case "TF-C":
+                                _tipo = TipoComprobante.TIQUE_FACTURA_C;
+                                break;
+                        }
+
+                        break;
+                    case TipoComprobante _:
+                        _tipo = value;
+                        break;
                 }
             }
         }

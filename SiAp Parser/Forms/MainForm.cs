@@ -57,7 +57,7 @@ namespace SiAp_Parser
             {
                 MessageBox.Show
                 (
-                    string.Format("Ocurrió un error al cargar las preferencias{0}{1}", Environment.NewLine + Environment.NewLine, ex.Message),
+                    $"Ocurrió un error al cargar las preferencias{Environment.NewLine + Environment.NewLine}{ex.Message}",
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -92,11 +92,11 @@ namespace SiAp_Parser
 
             SettingsManager.CurrentSettings.LastFileUsedPath.Value = ofd.FileName;
 
-            var fileNameToLower = ofd.FileName.ToLower();
+            string fileNameToLower = ofd.FileName.ToLower();
 
-            var isBuysBook = fileNameToLower.IndexOf("compras", StringComparison.CurrentCultureIgnoreCase) != -1;
-            var isSalesBook = fileNameToLower.IndexOf("ventas", StringComparison.CurrentCultureIgnoreCase) != -1;
-            var weirdCase = isBuysBook == isSalesBook;
+            bool isBuysBook = fileNameToLower.IndexOf("compras", StringComparison.CurrentCultureIgnoreCase) != -1;
+            bool isSalesBook = fileNameToLower.IndexOf("ventas", StringComparison.CurrentCultureIgnoreCase) != -1;
+            bool weirdCase = isBuysBook == isSalesBook;
 
             cmbTipo.SelectedIndex = isBuysBook || weirdCase ? 0 : 1;
 
@@ -413,7 +413,7 @@ namespace SiAp_Parser
                         continue;
                     }
 
-                    var isValidRow = date.Year != 1;
+                    bool isValidRow = date.Year != 1;
 
                     if (!isValidRow) continue;
 
@@ -459,7 +459,7 @@ namespace SiAp_Parser
                     {
                         if (cbSalesPointAndVoucherNumberInTheSameColumn.Checked)
                         {
-                            var strNumbers = excelReader.GetSafeString((int)indexes["SalesPoint"]);
+                            string strNumbers = excelReader.GetSafeString((int)indexes["SalesPoint"]);
                             var numbers = new string[] { "1", "1" };
 
                             if (!string.IsNullOrEmpty(strNumbers))
@@ -469,10 +469,10 @@ namespace SiAp_Parser
                             if (numbers.Length == 1)
                                 numbers = new string[] { "1", numbers[0] };
 
-                            short.TryParse(numbers[0], out var salesPoint);
+                            short.TryParse(numbers[0], out short salesPoint);
                             c.PuntoDeVenta = salesPoint;
 
-                            int.TryParse(numbers[1], out var voucherNumber);
+                            int.TryParse(numbers[1], out int voucherNumber);
                             c.Numero = voucherNumber;
                         }
                         else
@@ -521,7 +521,7 @@ namespace SiAp_Parser
                             {
                                 c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
 
-                                if (!ValidationHelper.IsValidCUIT(c.NumeroIdentificacionContratante))
+                                if (!ValidationHelper.IsValidCuit(c.NumeroIdentificacionContratante))
                                     throw new ArgumentException("Un CUIT no tiene el formato correcto");
                             }
                             catch
@@ -543,7 +543,7 @@ namespace SiAp_Parser
                     {
                         foreach (KeyValuePair<string, int> item in indexes["Aliquots"])
                         {
-                            var importeNeto = excelReader.GetSafeDouble(item.Value);
+                            double importeNeto = excelReader.GetSafeDouble(item.Value);
 
                             if (importeNeto <= 0)
                                 continue;
@@ -678,7 +678,7 @@ namespace SiAp_Parser
             }
             catch (Exception ex)
             {
-                var msg = "Ocurrió un error al procesar el archivo" + Environment.NewLine + Environment.NewLine + ex.Message;
+                string msg = "Ocurrió un error al procesar el archivo" + Environment.NewLine + Environment.NewLine + ex.Message;
 #if DEBUG
                 msg += string.Format(Environment.NewLine + "StackTrace: {0}", ex.StackTrace);
 #endif
@@ -698,7 +698,7 @@ namespace SiAp_Parser
 
             if (SettingsManager.CurrentSettings.ShowResults.Value)
             {
-                var i = 0;
+                int i = 0;
                 var resultsForm = new ResultsForm();
 
                 foreach (Comprobante c in comprobantes)
@@ -787,7 +787,7 @@ namespace SiAp_Parser
                         values.Add((int)item);
                         break;
                     case IEnumerable _:
-                        var isDictionary = item is Dictionary<string, int>;
+                        bool isDictionary = item is Dictionary<string, int>;
 
                         foreach (var subitem in item)
                             values.Add(Convert.ToInt32(isDictionary ? subitem.Value : subitem));
@@ -871,7 +871,7 @@ namespace SiAp_Parser
 
             var oldHash = File.Exists(sfd.FileName) ? sfd.FileName.GetFileHash() : new byte[] { };
 
-            var xml = documentSettings.SerializeToXML();
+            string xml = documentSettings.SerializeToXML();
 
             try
             {
@@ -930,7 +930,7 @@ namespace SiAp_Parser
             if (!cb.Enabled || !cb.Checked || !nud.Enabled)
                 return null;
 
-            var i = (int)nud.Value;
+            int i = (int)nud.Value;
 
             return i;
         }
@@ -1274,7 +1274,7 @@ namespace SiAp_Parser
 
         private void cbAutodetectIndexes_Click(object sender, EventArgs e)
         {
-            var input =
+            string input =
                 Interaction.InputBox
                 (
                     "Por favor ingrese el índice (basado en 0) de la fila en la que se encuetran las cabeceras de la tabla",
@@ -1285,7 +1285,7 @@ namespace SiAp_Parser
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
                 return;
 
-            var headersIndex = int.Parse(input);
+            int headersIndex = int.Parse(input);
 
             if (headersIndex < 0)
                 return;
@@ -1301,7 +1301,7 @@ namespace SiAp_Parser
             if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
                 return;
 
-            var columnsAmount = int.Parse(input);
+            int columnsAmount = int.Parse(input);
 
             if (columnsAmount < 2)
                 return;
@@ -1311,14 +1311,14 @@ namespace SiAp_Parser
                 var excelReader = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).GetExcelDataReader();
                 var dic = new Dictionary<string, int>();
 
-                for (var i = 0; i <= headersIndex; i++)
+                for (int i = 0; i <= headersIndex; i++)
                     excelReader.Read();
 
-                for (var i = 0; i <= columnsAmount; i++)
+                for (int i = 0; i <= columnsAmount; i++)
                 {
                     try
                     {
-                        var lec = Regex.Replace(excelReader.GetSafeString(i).ToLower(), @"[.%]", string.Empty).Trim();
+                        string lec = Regex.Replace(excelReader.GetSafeString(i).ToLower(), @"[.%]", string.Empty).Trim();
 
                         if (string.IsNullOrEmpty(lec) || string.IsNullOrWhiteSpace(lec))
                             continue;

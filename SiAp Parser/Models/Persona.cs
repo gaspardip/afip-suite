@@ -5,7 +5,10 @@ namespace SiAp_Parser.Models
 {
     public class Persona
     {
-        public Persona() { }
+        public Persona()
+        {
+
+        }
 
         public Persona(string denominacion, string cuit)
         {

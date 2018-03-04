@@ -6,16 +6,16 @@ namespace SiAp_Parser.Serialization
     {
         public Alicuota()
         {
-            this.Percentage = 0;
-            this.Enabled = false;
-            this.Index = 0;
+            Percentage = 0;
+            Enabled = false;
+            Index = 0;
         }
 
         public Alicuota(decimal percentage, decimal index, bool enabled)
         {
-            this.Percentage = percentage;
-            this.Index = index;
-            this.Enabled = enabled;
+            Percentage = percentage;
+            Index = index;
+            Enabled = enabled;
         }
 
         [XmlAttribute("percentage")]
