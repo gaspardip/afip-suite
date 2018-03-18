@@ -22,7 +22,7 @@ namespace SiAp_Parser.Serialization
             GrossIncome = new Index(10, true);
             InternalTaxes = new Index(13, true);
             Total = new Index(12, true);
-            Aliquots = new List<Alicuota>()
+            Aliquots = new List<Alicuota>
             {
                 new Alicuota(21, 6, true),
                 new Alicuota(10.5m, 7, true),

@@ -114,7 +114,6 @@
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\CuitOnlineHelper.cs" />
-    <Compile Include="Helpers\ScrapingHelper.cs" />
     <Compile Include="Helpers\SerializationHelpers.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="Models\AlicuotaCompra.cs" />

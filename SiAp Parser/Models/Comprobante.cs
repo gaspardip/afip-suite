@@ -84,7 +84,7 @@ namespace SiAp_Parser.Models
                             return;
 
                         string[] parts;
-                        var finalTypeStr = string.Empty;
+                        string finalTypeStr;
 
                         parts = Regex.Replace(value, @"(["",.-]*)(?:poliza)?", string.Empty, RegexOptions.IgnoreCase).Split(' ');
                         parts = parts.Where(x => !string.IsNullOrEmpty(x)).ToArray();
@@ -218,6 +218,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _puntoDeVenta = value;
             }
         }
@@ -230,6 +231,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _numero = value;
             }
         }
@@ -269,6 +271,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _importeConceptosNoIntegranElNetoGravado = value;
             }
         }
@@ -281,6 +284,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _importeOperacionesExentas = value;
             }
         }
@@ -305,6 +309,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _importeIngresosBrutos = value;
             }
         }
@@ -317,6 +322,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _importeImpuestosMunicipales = value;
             }
         }
@@ -329,6 +335,7 @@ namespace SiAp_Parser.Models
             {
                 if (value < 0)
                     return;
+
                 _importeImpuestosInternos = value;
             }
         }

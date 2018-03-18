@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using HtmlAgilityPack;
 using ScrapySharp.Extensions;
-using SiAp_Parser.Models;
 using SiAp_Parser.Enums;
+using SiAp_Parser.Models;
 
 namespace SiAp_Parser.Helpers
 {
-    public class CuitOnlineHelper : ScrapingHelper
+    public static class CuitOnlineHelper
     {
-        public CuitOnlineHelper(string p) : base(new Uri($"https://www.cuitonline.com/search.php?q={p.Replace(' ', '+')}"))
+        static CuitOnlineHelper()
         {
-
+            Web = new HtmlWeb();
         }
 
-        public Persona GetPersonInfo()
+        public static async Task<Persona> GetPersonInfo(string id)
         {
+            Uri = new Uri($"https://www.cuitonline.com/search.php?q={id.Replace(' ', '+')}");
+            Document = await Web.LoadFromWebAsync(Uri.ToString());
+
             var hit = Document.DocumentNode.CssSelect("#searchResults .hit").FirstOrDefault();
 
             if (hit == null || !hit.HasChildNodes)
@@ -27,5 +32,9 @@ namespace SiAp_Parser.Helpers
                 Tipo = hit.InnerText.IndexOf("Jurídica") != -1 ? TipoPersona.Juridica : TipoPersona.Fisica
             };
         }
+
+        private static Uri Uri { get; set; }
+        private static HtmlWeb Web { get; }
+        private static HtmlDocument Document { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace SiAp_Parser
 {
     public partial class MainForm : Form
     {
+        public Dictionary<string, int> NrosComprobantes { get; }
         public SettingsManager SettingsManager { get; }
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -26,6 +27,7 @@ namespace SiAp_Parser
         {
             InitializeComponent();
 
+            NrosComprobantes = new Dictionary<string, int>();
             SettingsManager = new SettingsManager(true);
 
             #region ComboBox
@@ -105,14 +107,17 @@ namespace SiAp_Parser
             btnProcessFile.Enabled = true;
         }
 
-        private void btnProcessFile_Click(object sender, EventArgs e)
+        private async void btnProcessFile_Click(object sender, EventArgs e)
         {
+            NrosComprobantes.Clear();
+            btnProcessFile.Enabled = false;
+
             SettingsManager.CurrentSettings.LastBookTypeUsed.Value = SettingsManager.CurrentBookType;
             SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value = SettingsManager.CurrentIndexesPath;
 
             var comprobantes = new List<dynamic>();
 
-            var indexes = new Dictionary<string, dynamic>()
+            var indexes = new Dictionary<string, dynamic>
             {
                 { "Aliquots", new Dictionary<string, int>() },
             };
@@ -391,6 +396,7 @@ namespace SiAp_Parser
 
             if (CheckIndexesEquality(indexesCopy))
             {
+                btnProcessFile.Enabled = true;
                 MessageBox.Show("Todos los índices deben ser diferentes", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -398,7 +404,8 @@ namespace SiAp_Parser
             // http://stackoverflow.com/questions/21849756/excel-data-reader-issues-column-names-and-sheet-selection
             try
             {
-                var excelReader = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).GetExcelDataReader();
+                var fs = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                var excelReader = fs.GetExcelDataReader();
 
                 while (excelReader.Read())
                 {
@@ -406,7 +413,7 @@ namespace SiAp_Parser
 
                     try
                     {
-                        date = excelReader.GetDateTime((int)indexes["Date"]);
+                        date = excelReader.GetDateTime((int) indexes["Date"]);
                     }
                     catch
                     {
@@ -426,48 +433,61 @@ namespace SiAp_Parser
                             c = new ComprobanteCompra();
 
                             if (indexes.ContainsKey("ImportClearance"))
-                                c.DespachoImportacion = excelReader.GetSafeString((int)indexes["ImportClearance"]).Trim();
+                                c.DespachoImportacion =
+                                    excelReader.GetSafeString((int) indexes["ImportClearance"]).Trim();
                             if (indexes.ContainsKey("VATPerceptionsAmount"))
-                                c.ImportePercepcionesIVA = excelReader.GetSafeDouble((int)indexes["VATPerceptionsAmount"]);
+                                c.ImportePercepcionesIVA =
+                                    excelReader.GetSafeDouble((int) indexes["VATPerceptionsAmount"]);
                             if (indexes.ContainsKey("CUITIssuer"))
-                                c.CUITEmisor = excelReader.GetSafeString((int)indexes["CUITIssuer"]).Trim();
+                                c.CUITEmisor = excelReader.GetSafeString((int) indexes["CUITIssuer"]).Trim();
                             if (indexes.ContainsKey("ComputableTaxCredit"))
-                                c.CreditoFiscalComputable = excelReader.GetSafeDouble((int)indexes["ComputableTaxCredit"]);
+                                c.CreditoFiscalComputable =
+                                    excelReader.GetSafeDouble((int) indexes["ComputableTaxCredit"]);
                             if (indexes.ContainsKey("IssuerName"))
-                                c.DenominacionEmisor = excelReader.GetSafeString((int)indexes["IssuerName"]).Trim();
+                                c.DenominacionEmisor = excelReader.GetSafeString((int) indexes["IssuerName"]).Trim();
                             if (indexes.ContainsKey("VATCommission"))
-                                c.IVAComision = excelReader.GetSafeDouble((int)indexes["VATCommission"]);
+                                c.IVAComision = excelReader.GetSafeDouble((int) indexes["VATCommission"]);
                             break;
                         case TiposLibro.VENTAS:
                             c = new ComprobanteVenta();
 
                             if (indexes.ContainsKey("VoucherNumberUntil"))
-                                c.NumeroHasta = excelReader.GetInt32((int)indexes["VoucherNumberUntil"]);
+                                c.NumeroHasta = excelReader.GetInt32((int) indexes["VoucherNumberUntil"]);
                             if (indexes.ContainsKey("UncategorizedPerceptionAmount"))
-                                c.ImportePercepcionNoCategorizados = excelReader.GetSafeDouble((int)indexes["UncategorizedPerceptionAmount"]);
+                                c.ImportePercepcionNoCategorizados =
+                                    excelReader.GetSafeDouble((int) indexes["UncategorizedPerceptionAmount"]);
                             if (indexes.ContainsKey("PaymentExpireDate"))
-                                c.FechaVencimientoPago = excelReader.GetDateTime((int)indexes["PaymentExpireDate"]);
+                                c.FechaVencimientoPago = excelReader.GetDateTime((int) indexes["PaymentExpireDate"]);
                             break;
                     }
 
                     if (indexes.ContainsKey("Date"))
                         c.Fecha = date;
                     if (indexes.ContainsKey("VoucherType"))
-                        c.Tipo = excelReader.GetSafeString((int)indexes["VoucherType"]);
+                        c.Tipo = excelReader.GetSafeString((int) indexes["VoucherType"]);
 
                     if (indexes.ContainsKey("SalesPoint") || indexes.ContainsKey("VoucherNumber"))
                     {
                         if (cbSalesPointAndVoucherNumberInTheSameColumn.Checked)
                         {
-                            string strNumbers = excelReader.GetSafeString((int)indexes["SalesPoint"]);
-                            var numbers = new string[] { "1", "1" };
+                            string strNumbers = excelReader.GetSafeString((int) indexes["SalesPoint"]);
+
+
+                            var numbers = new[] { "1", "1" };
 
                             if (!string.IsNullOrEmpty(strNumbers))
                                 numbers = strNumbers.Replace(" ", string.Empty).Split('-');
 
+                            if (numbers.Length == 0 &&
+                                SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
+                            {
+                                // Generate incremental numbers
+                            }
+
+
                             // There is no salespoint for some reason... just use 1
                             if (numbers.Length == 1)
-                                numbers = new string[] { "1", numbers[0] };
+                                numbers = new[] {"1", numbers[0]};
 
                             short.TryParse(numbers[0], out short salesPoint);
                             c.PuntoDeVenta = salesPoint;
@@ -477,8 +497,8 @@ namespace SiAp_Parser
                         }
                         else
                         {
-                            c.PuntoDeVenta = excelReader.GetInt16((int)indexes["SalesPoint"]);
-                            c.Numero = excelReader.GetInt32((int)indexes["VoucherNumber"]);
+                            c.PuntoDeVenta = excelReader.GetInt16((int) indexes["SalesPoint"]);
+                            c.Numero = excelReader.GetInt32((int) indexes["VoucherNumber"]);
                         }
 
                         if (SettingsManager.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
@@ -491,7 +511,7 @@ namespace SiAp_Parser
                     {
                         try
                         {
-                            c.Contratante = excelReader.GetSafeString((int)indexes["SellerName"]).Trim();
+                            c.Contratante = excelReader.GetSafeString((int) indexes["SellerName"]).Trim();
                         }
                         catch
                         {
@@ -500,11 +520,12 @@ namespace SiAp_Parser
                                 SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
                                 indexes.ContainsKey("SellerNumber"))
                             {
-                                c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
+                                c.NumeroIdentificacionContratante =
+                                    excelReader.GetSafeString((int) indexes["SellerNumber"]).Trim();
 
                                 if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
                                 {
-                                    p = new CuitOnlineHelper(c.NumeroIdentificacionContratante).GetPersonInfo();
+                                    p = await CuitOnlineHelper.GetPersonInfo(c.NumeroIdentificacionContratante);
 
                                     if (p != null)
                                         c.Contratante = p.Denominacion;
@@ -519,7 +540,8 @@ namespace SiAp_Parser
                         {
                             try
                             {
-                                c.NumeroIdentificacionContratante = excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
+                                c.NumeroIdentificacionContratante =
+                                    excelReader.GetSafeString((int) indexes["SellerNumber"]).Trim();
 
                                 if (!ValidationHelper.IsValidCuit(c.NumeroIdentificacionContratante))
                                     throw new ArgumentException("Un CUIT no tiene el formato correcto");
@@ -530,7 +552,7 @@ namespace SiAp_Parser
                                     SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
                                     indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
                                 {
-                                    p = new CuitOnlineHelper(c.Contratante).GetPersonInfo();
+                                    p = await CuitOnlineHelper.GetPersonInfo(c.Contratante);
 
                                     if (p != null)
                                         c.NumeroIdentificacionContratante = p.CUIT;
@@ -553,7 +575,7 @@ namespace SiAp_Parser
                             switch (SettingsManager.CurrentBookType)
                             {
                                 case TiposLibro.COMPRAS:
-                                    a = new AlicuotaCompra()
+                                    a = new AlicuotaCompra
                                     {
                                         TipoComprobante = c.Tipo,
                                         PuntoDeVenta = c.PuntoDeVenta,
@@ -564,7 +586,7 @@ namespace SiAp_Parser
                                     };
                                     break;
                                 case TiposLibro.VENTAS:
-                                    a = new AlicuotaVenta()
+                                    a = new AlicuotaVenta
                                     {
                                         TipoComprobante = c.Tipo,
                                         PuntoDeVenta = c.PuntoDeVenta,
@@ -601,7 +623,9 @@ namespace SiAp_Parser
                     }
 
                     if (indexes.ContainsKey("UntaxedNet"))
-                        c.ImporteConceptosNoIntegranElNetoGravado = excelReader.GetSafeDouble((int)indexes["UntaxedNet"]);
+                        c.ImporteConceptosNoIntegranElNetoGravado =
+                            excelReader.GetSafeDouble((int) indexes["UntaxedNet"]);
+
                     if (indexes.ContainsKey("GrossIncome"))
                     {
                         foreach (int i in indexes["GrossIncome"])
@@ -609,10 +633,12 @@ namespace SiAp_Parser
                             c.ImporteIngresosBrutos += excelReader.GetSafeDouble(i);
                         }
                     }
+
                     if (indexes.ContainsKey("InternalTaxes"))
-                        c.ImporteImpuestosInternos = excelReader.GetSafeDouble((int)indexes["InternalTaxes"]);
+                        c.ImporteImpuestosInternos = excelReader.GetSafeDouble((int) indexes["InternalTaxes"]);
+
                     if (indexes.ContainsKey("Total"))
-                        c.ImporteTotal = excelReader.GetSafeDouble((int)indexes["Total"]);
+                        c.ImporteTotal = excelReader.GetSafeDouble((int) indexes["Total"]);
 
                     if (c.Tipo == TipoComprobante.FACTURAS_C || c.Tipo == TipoComprobante.NOTAS_DE_CREDITO_C)
                     {
@@ -620,7 +646,7 @@ namespace SiAp_Parser
                         c.CantidadAlicuotasIVA = 0;
                     }
                     else
-                        c.CantidadAlicuotasIVA = (ushort)c.Alicuotas.Count;
+                        c.CantidadAlicuotasIVA = (ushort) c.Alicuotas.Count;
 
                     // Verificar si es nota de credito de cualquier tipo...
 
@@ -629,14 +655,95 @@ namespace SiAp_Parser
                 }
 
                 excelReader.Close();
+
+                #region Post-process
+
+                if (SettingsManager.CurrentSettings.ShowResults.Value)
+                {
+                    int i = 0;
+                    var resultsForm = new ResultsForm();
+
+                    foreach (Comprobante c in comprobantes)
+                    {
+                        resultsForm.AddResultsRow(
+                            ++i,
+                            c.Fecha.ToString("MM/dd/yyyy"),
+                            c.Tipo,
+                            c.PuntoDeVenta,
+                            c.Numero,
+                            c.Contratante,
+                            c.NumeroIdentificacionContratante,
+                            c.ImporteConceptosNoIntegranElNetoGravado,
+                            c.ImporteIngresosBrutos,
+                            c.ImporteTotal
+                        );
+                    }
+
+                    resultsForm.ShowDialog(this);
+                }
+                else
+                {
+                    var logs = GenerateLogFromVoucherList(comprobantes);
+
+                    if (logs == null)
+                        return;
+
+                    if (SettingsManager.CurrentSettings.AutoSaveLogs.Value)
+                    {
+                        SettingsManager.OutputConfig.FileName = "vouchers.txt";
+                        SettingsManager.OutputConfig.FileName = "aliquots.txt";
+                        File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
+                    }
+                    else
+                    {
+                        var sfd = new SaveFileDialog
+                        {
+                            Filter = SettingsManager.OutputConfig.DialogFilter,
+                            Title = SettingsManager.OutputConfig.VouchersSaveFileDialogTitle,
+                            InitialDirectory = SettingsManager.OutputConfig.Directory,
+                            FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", OutputConfig.DefaultFileName, ".txt")
+                        };
+
+                        if (sfd.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        SettingsManager.OutputConfig.FileName = sfd.FileName;
+
+                        File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["vouchers"]["log"]);
+
+                        sfd.Title = SettingsManager.OutputConfig.AliquotsSaveFileDialogTitle;
+                        sfd.InitialDirectory = Directory.GetParent(sfd.FileName).FullName;
+                        sfd.FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", OutputConfig.DefaultFileName, ".txt");
+
+                        if (sfd.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        SettingsManager.OutputConfig.FileName = sfd.FileName;
+
+                        File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
+
+                        MessageBox.Show
+                        (
+                            $"{logs["vouchers"]["amount"]} comprobantes generados, {logs["aliquots"]["amount"]} alicuotas generadas",
+                            "Información",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+                        );
+                    }
+                }
+
+                #endregion
             }
+
             #region Exceptions
+
             catch (ArgumentException ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
+
             #region PathTooLongException
+
             catch (PathTooLongException)
             {
                 MessageBox.Show
@@ -647,10 +754,12 @@ namespace SiAp_Parser
                     MessageBoxIcon.Warning
                 );
                 txtFilepath.Text = string.Empty;
-                return;
             }
+
             #endregion
+
             #region FileNotFoundException
+
             catch (FileNotFoundException)
             {
                 MessageBox.Show
@@ -661,10 +770,12 @@ namespace SiAp_Parser
                     MessageBoxIcon.Error
                 );
                 txtFilepath.Text = string.Empty;
-                return;
             }
+
             #endregion
+
             #region IndexOutOfRangeException
+
             catch (IndexOutOfRangeException)
             {
                 MessageBox.Show
@@ -674,11 +785,11 @@ namespace SiAp_Parser
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
-                return;
             }
             catch (Exception ex)
             {
-                string msg = "Ocurrió un error al procesar el archivo" + Environment.NewLine + Environment.NewLine + ex.Message;
+                string msg = "Ocurrió un error al procesar el archivo" + Environment.NewLine + Environment.NewLine +
+                             ex.Message;
 #if DEBUG
                 msg += string.Format(Environment.NewLine + "StackTrace: {0}", ex.StackTrace);
 #endif
@@ -690,84 +801,15 @@ namespace SiAp_Parser
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
-
-                return;
             }
-            #endregion
+
             #endregion
 
-            if (SettingsManager.CurrentSettings.ShowResults.Value)
+            #endregion
+
+            finally
             {
-                int i = 0;
-                var resultsForm = new ResultsForm();
-
-                foreach (Comprobante c in comprobantes)
-                {
-                    resultsForm.AddResultsRow(
-                        ++i,
-                        c.Fecha.ToString("MM/dd/yyyy"),
-                        c.Tipo,
-                        c.PuntoDeVenta,
-                        c.Numero,
-                        c.Contratante,
-                        c.NumeroIdentificacionContratante,
-                        c.ImporteConceptosNoIntegranElNetoGravado,
-                        c.ImporteIngresosBrutos,
-                        c.ImporteTotal
-                    );
-                }
-
-                resultsForm.ShowDialog(this);
-            }
-            else
-            {
-                var logs = GenerateLogFromVoucherList(comprobantes);
-
-                if (logs == null)
-                    return;
-
-                if (SettingsManager.CurrentSettings.AutoSaveLogs.Value)
-                {
-                    SettingsManager.OutputConfig.FileName = "vouchers.txt";
-                    SettingsManager.OutputConfig.FileName = "aliquots.txt";
-                    File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
-                }
-                else
-                {
-                    var sfd = new SaveFileDialog
-                    {
-                        Filter = SettingsManager.OutputConfig.DialogFilter,
-                        Title = SettingsManager.OutputConfig.VouchersSaveFileDialogTitle,
-                        InitialDirectory = SettingsManager.OutputConfig.Directory,
-                        FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", OutputConfig.DefaultFileName, ".txt")
-                    };
-
-                    if (sfd.ShowDialog() != DialogResult.OK)
-                        return;
-
-                    SettingsManager.OutputConfig.FileName = sfd.FileName;
-
-                    File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["vouchers"]["log"]);
-
-                    sfd.Title = SettingsManager.OutputConfig.AliquotsSaveFileDialogTitle;
-                    sfd.InitialDirectory = Directory.GetParent(sfd.FileName).FullName;
-                    sfd.FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", OutputConfig.DefaultFileName, ".txt");
-
-                    if (sfd.ShowDialog() != DialogResult.OK)
-                        return;
-
-                    SettingsManager.OutputConfig.FileName = sfd.FileName;
-
-                    File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
-
-                    MessageBox.Show
-                    (
-                        $"{logs["vouchers"]["amount"]} comprobantes generados, {logs["aliquots"]["amount"]} alicuotas generadas",
-                        "Información",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                }
+                btnProcessFile.Enabled = true;
             }
         }
 
@@ -833,8 +875,8 @@ namespace SiAp_Parser
                 GrossIncome = new Index(txtGrossIncome.Text, cbGrossIncome.Checked),
                 InternalTaxes = new Index(nudInternalTaxes.Value, cbInternalTaxes.Checked),
                 Total = new Index(nudTotal.Value, cbTotal.Checked),
-                Aliquots = new List<Serialization.Alicuota>()
-                    {
+                Aliquots = new List<Serialization.Alicuota>
+                {
                         new Serialization.Alicuota(21, nudAliquot21.Value, cbAliquot21.Checked),
                         new Serialization.Alicuota(10.5m, nudAliquot105.Value, cbAliquot105.Checked),
                         new Serialization.Alicuota(27, nudAliquot27.Value, cbAliquot27.Checked),
@@ -951,7 +993,7 @@ namespace SiAp_Parser
         /// <summary>
         /// Restores both indexes and document-specific settings (NOT GLOBAL SETTINGS)
         /// </summary>
-        /// <param name="i"></param>
+        /// <param name="settings"></param>
         private void RestoreDocumentSettings(DocumentSettings settings)
         {
             if (settings == null)
