@@ -472,18 +472,20 @@ namespace SiAp_Parser
                         {
                             string strNumbers = excelReader.GetSafeString((int) indexes["SalesPoint"]);
 
-
-                            var numbers = new[] { "1", "1" };
+                            var numbers = new string[1];
 
                             if (!string.IsNullOrEmpty(strNumbers))
-                                numbers = strNumbers.Replace(" ", string.Empty).Split('-');
-
-                            if (numbers.Length == 0 &&
-                                SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
                             {
-                                // Generate incremental numbers
+                                numbers = strNumbers.Replace(" ", string.Empty).Split('-');
                             }
+                            else if(SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
+                            {
+                                // Generate incremental numbers here, but use random for now lol
 
+                                var random = new Random(Environment.TickCount);
+
+                                numbers[0] = random.Next(1, 10000000).ToString();
+                            }
 
                             // There is no salespoint for some reason... just use 1
                             if (numbers.Length == 1)
@@ -623,7 +625,7 @@ namespace SiAp_Parser
                     }
 
                     if (indexes.ContainsKey("UntaxedNet"))
-                        c.ImporteConceptosNoIntegranElNetoGravado =
+                        c.ImporteNoGravados =
                             excelReader.GetSafeDouble((int) indexes["UntaxedNet"]);
 
                     if (indexes.ContainsKey("GrossIncome"))
@@ -642,7 +644,7 @@ namespace SiAp_Parser
 
                     if (c.Tipo == TipoComprobante.FACTURAS_C || c.Tipo == TipoComprobante.NOTAS_DE_CREDITO_C)
                     {
-                        c.ImporteConceptosNoIntegranElNetoGravado = 0;
+                        c.ImporteNoGravados = 0;
                         c.CantidadAlicuotasIVA = 0;
                     }
                     else
@@ -673,7 +675,8 @@ namespace SiAp_Parser
                             c.Numero,
                             c.Contratante,
                             c.NumeroIdentificacionContratante,
-                            c.ImporteConceptosNoIntegranElNetoGravado,
+                            c.ImpuestoLiquidadoTotal,
+                            c.ImporteNoGravados,
                             c.ImporteIngresosBrutos,
                             c.ImporteTotal
                         );
@@ -776,7 +779,7 @@ namespace SiAp_Parser
 
             #region IndexOutOfRangeException
 
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
                 MessageBox.Show
                 (
@@ -1285,7 +1288,8 @@ namespace SiAp_Parser
 
             var dic = new Dictionary<string, Dictionary<string, string>>();
 
-            ushort vc = 0, ac = 0;
+            ushort vc = 0;
+            ushort ac = 0;
 
             foreach (var c in list)
             {

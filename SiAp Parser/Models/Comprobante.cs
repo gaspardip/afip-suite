@@ -32,7 +32,7 @@ namespace SiAp_Parser.Models
             NumeroIdentificacionContratante = c.NumeroIdentificacionContratante;
             Contratante = c.Contratante;
             ImporteTotal = c.ImporteTotal;
-            ImporteConceptosNoIntegranElNetoGravado = c.ImporteConceptosNoIntegranElNetoGravado;
+            ImporteNoGravados = c.ImporteNoGravados;
             ImporteOperacionesExentas = c.ImporteOperacionesExentas;
             ImportePercepcionesImpuestosNacionales = c.ImportePercepcionesImpuestosNacionales;
             ImporteIngresosBrutos = c.ImporteIngresosBrutos;
@@ -67,7 +67,9 @@ namespace SiAp_Parser.Models
             }
         }
 
-        public bool EsValido { get; set; }
+        public abstract double ImpuestoLiquidadoTotal { get; }
+
+        public bool EsValido { get; protected set; }
 
         public DateTime Fecha { get; set; }
 
@@ -263,16 +265,16 @@ namespace SiAp_Parser.Models
         }
         public double ImporteTotal { get; set; }
 
-        private double _importeConceptosNoIntegranElNetoGravado;
-        public double ImporteConceptosNoIntegranElNetoGravado
+        private double _importeNoGravados;
+        public double ImporteNoGravados
         {
-            get => _importeConceptosNoIntegranElNetoGravado;
+            get => _importeNoGravados;
             set
             {
                 if (value < 0)
                     return;
 
-                _importeConceptosNoIntegranElNetoGravado = value;
+                _importeNoGravados = value;
             }
         }
 

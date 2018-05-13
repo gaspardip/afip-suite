@@ -28,14 +28,7 @@ namespace SiAp_Parser
             sb.Append(Tipo.ToString("D4"));
             sb.Append(ImpuestoLiquidado.ToSIApFormat());
 
-            var alicuotaStr = sb.ToString();
-
-            if (alicuotaStr.Length != CANTIDAD_CARACTERES_ALICUOTAS_COMPRAS)
-            {
-
-            }
-
-            return alicuotaStr;
+            return sb.ToString();
         }
 
         public TipoComprobante TipoComprobante { get; set; }
@@ -97,7 +90,5 @@ namespace SiAp_Parser
         }
 
         public double ImpuestoLiquidado => ImporteNeto * Porcentaje;
-
-        private const ushort CANTIDAD_CARACTERES_ALICUOTAS_COMPRAS = 84;
     }
 }

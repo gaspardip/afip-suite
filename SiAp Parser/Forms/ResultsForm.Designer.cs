@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.dgvResults = new System.Windows.Forms.DataGridView();
+            this.btnExport = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblTotalImport = new System.Windows.Forms.Label();
+            this.lblCreditoFiscal = new System.Windows.Forms.Label();
             this.rowNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VoucherType = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -36,13 +41,10 @@
             this.VoucherNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IssuerName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SellerNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LiquidatedTax = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.UntaxedNet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GrossIncome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Total = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnExport = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblTotalImport = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvResults)).BeginInit();
             this.SuspendLayout();
             // 
@@ -61,14 +63,61 @@
             this.VoucherNumber,
             this.IssuerName,
             this.SellerNumber,
+            this.LiquidatedTax,
             this.UntaxedNet,
             this.GrossIncome,
             this.Total});
             this.dgvResults.Location = new System.Drawing.Point(12, 12);
             this.dgvResults.Name = "dgvResults";
             this.dgvResults.ReadOnly = true;
-            this.dgvResults.Size = new System.Drawing.Size(901, 265);
+            this.dgvResults.Size = new System.Drawing.Size(1092, 265);
             this.dgvResults.TabIndex = 0;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Location = new System.Drawing.Point(12, 299);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(113, 46);
+            this.btnExport.TabIndex = 1;
+            this.btnExport.Text = "Exportar";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(346, 299);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Importe total:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(284, 316);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(130, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Importe total crédito fiscal:";
+            // 
+            // lblTotalImport
+            // 
+            this.lblTotalImport.AutoSize = true;
+            this.lblTotalImport.Location = new System.Drawing.Point(420, 299);
+            this.lblTotalImport.Name = "lblTotalImport";
+            this.lblTotalImport.Size = new System.Drawing.Size(10, 13);
+            this.lblTotalImport.TabIndex = 4;
+            this.lblTotalImport.Text = "-";
+            // 
+            // lblCreditoFiscal
+            // 
+            this.lblCreditoFiscal.AutoSize = true;
+            this.lblCreditoFiscal.Location = new System.Drawing.Point(420, 316);
+            this.lblCreditoFiscal.Name = "lblCreditoFiscal";
+            this.lblCreditoFiscal.Size = new System.Drawing.Size(10, 13);
+            this.lblCreditoFiscal.TabIndex = 4;
+            this.lblCreditoFiscal.Text = "-";
             // 
             // rowNumber
             // 
@@ -132,6 +181,14 @@
             this.SellerNumber.ReadOnly = true;
             this.SellerNumber.Width = 116;
             // 
+            // LiquidatedTax
+            // 
+            this.LiquidatedTax.Frozen = true;
+            this.LiquidatedTax.HeaderText = "Impuesto Liquidado";
+            this.LiquidatedTax.Name = "LiquidatedTax";
+            this.LiquidatedTax.ReadOnly = true;
+            this.LiquidatedTax.Width = 114;
+            // 
             // UntaxedNet
             // 
             this.UntaxedNet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
@@ -159,48 +216,12 @@
             this.Total.ReadOnly = true;
             this.Total.Width = 56;
             // 
-            // btnExport
-            // 
-            this.btnExport.Location = new System.Drawing.Point(12, 299);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(113, 46);
-            this.btnExport.TabIndex = 1;
-            this.btnExport.Text = "Exportar";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(346, 299);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Importe total:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(284, 316);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(130, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Importe total crédito fiscal:";
-            // 
-            // lblTotalImport
-            // 
-            this.lblTotalImport.AutoSize = true;
-            this.lblTotalImport.Location = new System.Drawing.Point(420, 299);
-            this.lblTotalImport.Name = "lblTotalImport";
-            this.lblTotalImport.Size = new System.Drawing.Size(10, 13);
-            this.lblTotalImport.TabIndex = 4;
-            this.lblTotalImport.Text = "-";
-            // 
             // ResultsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(933, 359);
+            this.ClientSize = new System.Drawing.Size(1147, 359);
+            this.Controls.Add(this.lblCreditoFiscal);
             this.Controls.Add(this.lblTotalImport);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -223,6 +244,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblTotalImport;
+        private System.Windows.Forms.Label lblCreditoFiscal;
         private System.Windows.Forms.DataGridViewTextBoxColumn rowNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn Date;
         private System.Windows.Forms.DataGridViewTextBoxColumn VoucherType;
@@ -230,6 +252,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn VoucherNumber;
         private System.Windows.Forms.DataGridViewTextBoxColumn IssuerName;
         private System.Windows.Forms.DataGridViewTextBoxColumn SellerNumber;
+        private System.Windows.Forms.DataGridViewTextBoxColumn LiquidatedTax;
         private System.Windows.Forms.DataGridViewTextBoxColumn UntaxedNet;
         private System.Windows.Forms.DataGridViewTextBoxColumn GrossIncome;
         private System.Windows.Forms.DataGridViewTextBoxColumn Total;

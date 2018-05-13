@@ -13,43 +13,43 @@ namespace GeneradorDeLibros
             {
                 // plain number
                 case 11:
-                    this.Tipo = cuit.Substring(0, 2);
-                    this.Numero = cuit.Substring(2, 8);
-                    this.DigitoVerificador = cuit.Substring(9, 1);
-                    this.EsValido = true;
+                    Tipo = cuit.Substring(0, 2);
+                    Numero = cuit.Substring(2, 8);
+                    DigitoVerificador = cuit.Substring(9, 1);
+                    EsValido = true;
                     break;
                 // formatted number
                 case 13:
                     var parts = cuit.Split("-".ToCharArray());
-                    this.Tipo = parts[0];
-                    this.Numero = parts[1];
-                    this.DigitoVerificador = parts[2];
-                    this.EsValido = true;
+                    Tipo = parts[0];
+                    Numero = parts[1];
+                    DigitoVerificador = parts[2];
+                    EsValido = true;
                     break;
                 default:
-                    this.Numero = cuit;
+                    Numero = cuit;
                     break;
             }
 
-            this.TipoDocumento = GeneradorDeLibros.TipoDocumento.CUIT;
+            TipoDocumento = TipoDocumento.CUIT;
         }
 
         public CUIT(string tipo, string numero, string digitoVerificador)
         {
-            this.Tipo = tipo;
-            this.Numero = numero;
-            this.DigitoVerificador = digitoVerificador;
-            this.TipoDocumento = GeneradorDeLibros.TipoDocumento.CUIT;
+            Tipo = tipo;
+            Numero = numero;
+            DigitoVerificador = digitoVerificador;
+            TipoDocumento = TipoDocumento.CUIT;
         }
 
         public string Format(string separator = "-")
         {
-            return this.Tipo + separator + this.Numero + separator + this.TipoDocumento;
+            return Tipo + separator + Numero + separator + TipoDocumento;
         }
 
         public override string ToString()
         {
-            return this.Tipo + this.Numero + this.DigitoVerificador;
+            return Tipo + Numero + DigitoVerificador;
         }
 
         public TipoDocumento TipoDocumento { get; private set; }
@@ -61,7 +61,7 @@ namespace GeneradorDeLibros
             private set
             {
                 if (value.Length != 2 || !regex.IsMatch(value))
-                    this.EsValido = false;
+                    EsValido = false;
                 _tipo = value;
             }
         }
@@ -73,12 +73,12 @@ namespace GeneradorDeLibros
             private set
             {
                 if (value.Length != 8 || !regex.IsMatch(value))
-                    this.EsValido = false;
+                    EsValido = false;
                 _numero = value;
             }
         }
 
-        private Regex regex = new Regex("^[0-9]+$");
+        private readonly Regex regex = new Regex("^[0-9]+$");
 
         private string _digitoVerificador;
         public string DigitoVerificador
@@ -87,7 +87,7 @@ namespace GeneradorDeLibros
             private set
             {
                 if (value.Length != 1 || !regex.IsMatch(value))
-                    this.EsValido = false;
+                    EsValido = false;
                 _digitoVerificador = value;
             }
         }

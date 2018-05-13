@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SiAp_Parser.Extensions;
 using SiAp_Parser.Enums;
@@ -36,7 +37,7 @@ namespace SiAp_Parser.Models
         {
             double calculatedTotal = 0;
 
-            calculatedTotal += ImporteConceptosNoIntegranElNetoGravado;
+            calculatedTotal += ImporteNoGravados;
             calculatedTotal += ImporteOperacionesExentas;
             calculatedTotal += ImportePercepcionesImpuestosNacionales;
             calculatedTotal += ImporteIngresosBrutos;
@@ -66,7 +67,7 @@ namespace SiAp_Parser.Models
             sb.Append(NumeroIdentificacionContratante.PadLeft(20, '0'));
             sb.Append(Contratante.PadRight(30, ' '));
             sb.Append(ImporteTotal.ToSIApFormat());
-            sb.Append(ImporteConceptosNoIntegranElNetoGravado.ToSIApFormat());
+            sb.Append(ImporteNoGravados.ToSIApFormat());
             sb.Append(ImporteOperacionesExentas.ToSIApFormat());
             sb.Append(ImportePercepcionesIVA.ToSIApFormat());
             sb.Append(ImportePercepcionesImpuestosNacionales.ToSIApFormat());
@@ -103,6 +104,19 @@ namespace SiAp_Parser.Models
                     return;
 
                 _importePercepcionesIVA = value;
+            }
+        }
+
+        public override double ImpuestoLiquidadoTotal
+        {
+            get
+            {
+                if (Alicuotas.Count == 0)
+                    return 0;
+
+                return Alicuotas
+                    .Select(a => a.ImpuestoLiquidado)
+                    .Aggregate((acc, x) => acc + x);
             }
         }
 

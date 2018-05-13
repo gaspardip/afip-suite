@@ -31,21 +31,7 @@ namespace SiAp_Parser.Extensions
         {
             var value = reader.GetValue(i);
 
-            if (value == null)
-                return null;
-
-            var type = value.GetType();
-
-            if (type == typeof(string))
-                return (string)value;
-
-            if (type == typeof(int))
-                return ((int)value).ToString();
-
-            if (type == typeof(double))
-                return ((double)value).ToString();
-
-            return string.Empty;
+            return value?.ToString().Trim();
         }
     }
 }
