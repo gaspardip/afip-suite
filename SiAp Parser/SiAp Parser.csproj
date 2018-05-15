@@ -103,7 +103,6 @@
   <ItemGroup>
     <Compile Include="Enums\GrupoComprobante.cs" />
     <Compile Include="Enums\TipoPersona.cs" />
-    <Compile Include="Extensions\FileStreamExtensions.cs" />
     <Compile Include="Extensions\IExcelDataReaderExtensions.cs" />
     <Compile Include="Forms\AboutBox.cs">
       <SubType>Form</SubType>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ExcelDataReader;
 using Microsoft.VisualBasic;
 using NLog;
 using SiAp_Parser.Enums;
@@ -404,259 +405,260 @@ namespace SiAp_Parser
             // http://stackoverflow.com/questions/21849756/excel-data-reader-issues-column-names-and-sheet-selection
             try
             {
-                var fs = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                var excelReader = fs.GetExcelDataReader();
-
-                while (excelReader.Read())
+                using (var fs = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    DateTime date;
-
-                    try
+                    using (var excelReader = ExcelReaderFactory.CreateReader(fs))
                     {
-                        date = excelReader.GetDateTime((int) indexes["Date"]);
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-
-                    bool isValidRow = date.Year != 1;
-
-                    if (!isValidRow) continue;
-
-                    dynamic c = null;
-                    Persona p = null;
-
-                    switch (SettingsManager.CurrentBookType)
-                    {
-                        case TiposLibro.COMPRAS:
-                            c = new ComprobanteCompra();
-
-                            if (indexes.ContainsKey("ImportClearance"))
-                                c.DespachoImportacion =
-                                    excelReader.GetSafeString((int) indexes["ImportClearance"]).Trim();
-                            if (indexes.ContainsKey("VATPerceptionsAmount"))
-                                c.ImportePercepcionesIVA =
-                                    excelReader.GetSafeDouble((int) indexes["VATPerceptionsAmount"]);
-                            if (indexes.ContainsKey("CUITIssuer"))
-                                c.CUITEmisor = excelReader.GetSafeString((int) indexes["CUITIssuer"]).Trim();
-                            if (indexes.ContainsKey("ComputableTaxCredit"))
-                                c.CreditoFiscalComputable =
-                                    excelReader.GetSafeDouble((int) indexes["ComputableTaxCredit"]);
-                            if (indexes.ContainsKey("IssuerName"))
-                                c.DenominacionEmisor = excelReader.GetSafeString((int) indexes["IssuerName"]).Trim();
-                            if (indexes.ContainsKey("VATCommission"))
-                                c.IVAComision = excelReader.GetSafeDouble((int) indexes["VATCommission"]);
-                            break;
-                        case TiposLibro.VENTAS:
-                            c = new ComprobanteVenta();
-
-                            if (indexes.ContainsKey("VoucherNumberUntil"))
-                                c.NumeroHasta = excelReader.GetInt32((int) indexes["VoucherNumberUntil"]);
-                            if (indexes.ContainsKey("UncategorizedPerceptionAmount"))
-                                c.ImportePercepcionNoCategorizados =
-                                    excelReader.GetSafeDouble((int) indexes["UncategorizedPerceptionAmount"]);
-                            if (indexes.ContainsKey("PaymentExpireDate"))
-                                c.FechaVencimientoPago = excelReader.GetDateTime((int) indexes["PaymentExpireDate"]);
-                            break;
-                    }
-
-                    if (indexes.ContainsKey("Date"))
-                        c.Fecha = date;
-                    if (indexes.ContainsKey("VoucherType"))
-                        c.Tipo = excelReader.GetSafeString((int) indexes["VoucherType"]);
-
-                    if (indexes.ContainsKey("SalesPoint") || indexes.ContainsKey("VoucherNumber"))
-                    {
-                        if (cbSalesPointAndVoucherNumberInTheSameColumn.Checked)
+                        while (excelReader.Read())
                         {
-                            string strNumbers = excelReader.GetSafeString((int) indexes["SalesPoint"]);
+                            DateTime date;
 
-                            var numbers = new string[1];
-
-                            if (!string.IsNullOrEmpty(strNumbers))
-                            {
-                                numbers = strNumbers.Replace(" ", string.Empty).Split('-');
-                            }
-                            else if(SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
-                            {
-                                // Generate incremental numbers here, but use random for now lol
-
-                                var random = new Random(Environment.TickCount);
-
-                                numbers[0] = random.Next(1, 10000000).ToString();
-                            }
-
-                            // There is no salespoint for some reason... just use 1
-                            if (numbers.Length == 1)
-                                numbers = new[] {"1", numbers[0]};
-
-                            short.TryParse(numbers[0], out short salesPoint);
-                            c.PuntoDeVenta = salesPoint;
-
-                            int.TryParse(numbers[1], out int voucherNumber);
-                            c.Numero = voucherNumber;
-                        }
-                        else
-                        {
-                            c.PuntoDeVenta = excelReader.GetInt16((int) indexes["SalesPoint"]);
-                            c.Numero = excelReader.GetInt32((int) indexes["VoucherNumber"]);
-                        }
-
-                        if (SettingsManager.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
-                        {
-                            c.NumeroHasta = c.Numero;
-                        }
-                    }
-
-                    if (indexes.ContainsKey("SellerName"))
-                    {
-                        try
-                        {
-                            c.Contratante = excelReader.GetSafeString((int) indexes["SellerName"]).Trim();
-                        }
-                        catch
-                        {
-                            if (
-                                string.IsNullOrEmpty(c.Contratante) &&
-                                SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
-                                indexes.ContainsKey("SellerNumber"))
-                            {
-                                c.NumeroIdentificacionContratante =
-                                    excelReader.GetSafeString((int) indexes["SellerNumber"]).Trim();
-
-                                if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
-                                {
-                                    p = await CuitOnlineHelper.GetPersonInfo(c.NumeroIdentificacionContratante);
-
-                                    if (p != null)
-                                        c.Contratante = p.Denominacion;
-                                }
-                            }
-                        }
-                    }
-
-                    if (indexes.ContainsKey("SellerNumber"))
-                    {
-                        if (c.NumeroIdentificacionContratante == "0")
-                        {
                             try
                             {
-                                c.NumeroIdentificacionContratante =
-                                    excelReader.GetSafeString((int) indexes["SellerNumber"]).Trim();
-
-                                if (!ValidationHelper.IsValidCuit(c.NumeroIdentificacionContratante))
-                                    throw new ArgumentException("Un CUIT no tiene el formato correcto");
+                                date = excelReader.GetDateTime((int)indexes["Date"]);
                             }
                             catch
                             {
-                                if (
-                                    SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
-                                    indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
-                                {
-                                    p = await CuitOnlineHelper.GetPersonInfo(c.Contratante);
-
-                                    if (p != null)
-                                        c.NumeroIdentificacionContratante = p.CUIT;
-                                }
-                            }
-                        }
-                    }
-
-                    if (indexes["Aliquots"].Count > 0)
-                    {
-                        foreach (KeyValuePair<string, int> item in indexes["Aliquots"])
-                        {
-                            double importeNeto = excelReader.GetSafeDouble(item.Value);
-
-                            if (importeNeto <= 0)
                                 continue;
+                            }
 
-                            dynamic a = null;
+                            bool isValidRow = date.Year != 1;
+
+                            if (!isValidRow) continue;
+
+                            dynamic c = null;
+                            Persona p = null;
 
                             switch (SettingsManager.CurrentBookType)
                             {
                                 case TiposLibro.COMPRAS:
-                                    a = new AlicuotaCompra
-                                    {
-                                        TipoComprobante = c.Tipo,
-                                        PuntoDeVenta = c.PuntoDeVenta,
-                                        NumeroComprobante = c.Numero,
-                                        CodigoDocumentoContratante = c.CodigoDocumentoContratante,
-                                        NumeroIdentificacionContratante = c.NumeroIdentificacionContratante,
-                                        ImporteNeto = importeNeto
-                                    };
+                                    c = new ComprobanteCompra();
+
+                                    if (indexes.ContainsKey("ImportClearance"))
+                                        c.DespachoImportacion =
+                                            excelReader.GetSafeString((int)indexes["ImportClearance"]).Trim();
+                                    if (indexes.ContainsKey("VATPerceptionsAmount"))
+                                        c.ImportePercepcionesIVA =
+                                            excelReader.GetSafeDouble((int)indexes["VATPerceptionsAmount"]);
+                                    if (indexes.ContainsKey("CUITIssuer"))
+                                        c.CUITEmisor = excelReader.GetSafeString((int)indexes["CUITIssuer"]).Trim();
+                                    if (indexes.ContainsKey("ComputableTaxCredit"))
+                                        c.CreditoFiscalComputable =
+                                            excelReader.GetSafeDouble((int)indexes["ComputableTaxCredit"]);
+                                    if (indexes.ContainsKey("IssuerName"))
+                                        c.DenominacionEmisor = excelReader.GetSafeString((int)indexes["IssuerName"]).Trim();
+                                    if (indexes.ContainsKey("VATCommission"))
+                                        c.IVAComision = excelReader.GetSafeDouble((int)indexes["VATCommission"]);
                                     break;
                                 case TiposLibro.VENTAS:
-                                    a = new AlicuotaVenta
-                                    {
-                                        TipoComprobante = c.Tipo,
-                                        PuntoDeVenta = c.PuntoDeVenta,
-                                        NumeroComprobante = c.Numero,
-                                        ImporteNeto = importeNeto
-                                    };
+                                    c = new ComprobanteVenta();
+
+                                    if (indexes.ContainsKey("VoucherNumberUntil"))
+                                        c.NumeroHasta = excelReader.GetInt32((int)indexes["VoucherNumberUntil"]);
+                                    if (indexes.ContainsKey("UncategorizedPerceptionAmount"))
+                                        c.ImportePercepcionNoCategorizados =
+                                            excelReader.GetSafeDouble((int)indexes["UncategorizedPerceptionAmount"]);
+                                    if (indexes.ContainsKey("PaymentExpireDate"))
+                                        c.FechaVencimientoPago = excelReader.GetDateTime((int)indexes["PaymentExpireDate"]);
                                     break;
                             }
 
-                            switch (item.Key)
+                            if (indexes.ContainsKey("Date"))
+                                c.Fecha = date;
+                            if (indexes.ContainsKey("VoucherType"))
+                                c.Tipo = excelReader.GetSafeString((int)indexes["VoucherType"]);
+
+                            if (indexes.ContainsKey("SalesPoint") || indexes.ContainsKey("VoucherNumber"))
                             {
-                                case "21":
-                                    a.Porcentaje = 21d;
-                                    break;
-                                case "105":
-                                    a.Porcentaje = 10.5d;
-                                    break;
-                                case "27":
-                                    a.Porcentaje = 27d;
-                                    break;
-                                case "5":
-                                    a.Porcentaje = 5d;
-                                    break;
-                                case "250":
-                                    a.Porcentaje = 2.5d;
-                                    break;
-                                case "0":
-                                    a.Porcentaje = 0;
-                                    break;
+                                if (cbSalesPointAndVoucherNumberInTheSameColumn.Checked)
+                                {
+                                    string strNumbers = excelReader.GetSafeString((int)indexes["SalesPoint"]);
+
+                                    var numbers = new string[1];
+
+                                    if (!string.IsNullOrEmpty(strNumbers))
+                                    {
+                                        numbers = strNumbers.Replace(" ", string.Empty).Split('-');
+                                    }
+                                    else if (SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
+                                    {
+                                        // Generate incremental numbers here, but use random for now lol
+
+                                        var random = new Random(Environment.TickCount);
+
+                                        numbers[0] = random.Next(1, 10000000).ToString();
+                                    }
+
+                                    // There is no salespoint for some reason... just use 1
+                                    if (numbers.Length == 1)
+                                        numbers = new[] { "1", numbers[0] };
+
+                                    short.TryParse(numbers[0], out short salesPoint);
+                                    c.PuntoDeVenta = salesPoint;
+
+                                    int.TryParse(numbers[1], out int voucherNumber);
+                                    c.Numero = voucherNumber;
+                                }
+                                else
+                                {
+                                    c.PuntoDeVenta = excelReader.GetInt16((int)indexes["SalesPoint"]);
+                                    c.Numero = excelReader.GetInt32((int)indexes["VoucherNumber"]);
+                                }
+
+                                if (SettingsManager.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
+                                {
+                                    c.NumeroHasta = c.Numero;
+                                }
                             }
 
-                            c.Alicuotas.Add(a);
+                            if (indexes.ContainsKey("SellerName"))
+                            {
+                                try
+                                {
+                                    c.Contratante = excelReader.GetSafeString((int)indexes["SellerName"]).Trim();
+                                }
+                                catch
+                                {
+                                    if (
+                                        string.IsNullOrEmpty(c.Contratante) &&
+                                        SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                        indexes.ContainsKey("SellerNumber"))
+                                    {
+                                        c.NumeroIdentificacionContratante =
+                                            excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
+
+                                        if (!string.IsNullOrEmpty(c.NumeroIdentificacionContratante))
+                                        {
+                                            p = await CuitOnlineHelper.GetPersonInfo(c.NumeroIdentificacionContratante);
+
+                                            if (p != null)
+                                                c.Contratante = p.Denominacion;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (indexes.ContainsKey("SellerNumber"))
+                            {
+                                if (c.NumeroIdentificacionContratante == "0")
+                                {
+                                    try
+                                    {
+                                        c.NumeroIdentificacionContratante =
+                                            excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
+
+                                        if (!ValidationHelper.IsValidCuit(c.NumeroIdentificacionContratante))
+                                            throw new ArgumentException("Un CUIT no tiene el formato correcto");
+                                    }
+                                    catch
+                                    {
+                                        if (
+                                            SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                            indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
+                                        {
+                                            p = await CuitOnlineHelper.GetPersonInfo(c.Contratante);
+
+                                            if (p != null)
+                                                c.NumeroIdentificacionContratante = p.CUIT;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (indexes["Aliquots"].Count > 0)
+                            {
+                                foreach (KeyValuePair<string, int> item in indexes["Aliquots"])
+                                {
+                                    double importeNeto = excelReader.GetSafeDouble(item.Value);
+
+                                    if (importeNeto <= 0)
+                                        continue;
+
+                                    dynamic a = null;
+
+                                    switch (SettingsManager.CurrentBookType)
+                                    {
+                                        case TiposLibro.COMPRAS:
+                                            a = new AlicuotaCompra
+                                            {
+                                                TipoComprobante = c.Tipo,
+                                                PuntoDeVenta = c.PuntoDeVenta,
+                                                NumeroComprobante = c.Numero,
+                                                CodigoDocumentoContratante = c.CodigoDocumentoContratante,
+                                                NumeroIdentificacionContratante = c.NumeroIdentificacionContratante,
+                                                ImporteNeto = importeNeto
+                                            };
+                                            break;
+                                        case TiposLibro.VENTAS:
+                                            a = new AlicuotaVenta
+                                            {
+                                                TipoComprobante = c.Tipo,
+                                                PuntoDeVenta = c.PuntoDeVenta,
+                                                NumeroComprobante = c.Numero,
+                                                ImporteNeto = importeNeto
+                                            };
+                                            break;
+                                    }
+
+                                    switch (item.Key)
+                                    {
+                                        case "21":
+                                            a.Porcentaje = 21d;
+                                            break;
+                                        case "105":
+                                            a.Porcentaje = 10.5d;
+                                            break;
+                                        case "27":
+                                            a.Porcentaje = 27d;
+                                            break;
+                                        case "5":
+                                            a.Porcentaje = 5d;
+                                            break;
+                                        case "250":
+                                            a.Porcentaje = 2.5d;
+                                            break;
+                                        case "0":
+                                            a.Porcentaje = 0;
+                                            break;
+                                    }
+
+                                    c.Alicuotas.Add(a);
+                                }
+                            }
+
+                            if (indexes.ContainsKey("UntaxedNet"))
+                                c.ImporteNoGravados =
+                                    excelReader.GetSafeDouble((int)indexes["UntaxedNet"]);
+
+                            if (indexes.ContainsKey("GrossIncome"))
+                            {
+                                foreach (int i in indexes["GrossIncome"])
+                                {
+                                    c.ImporteIngresosBrutos += excelReader.GetSafeDouble(i);
+                                }
+                            }
+
+                            if (indexes.ContainsKey("InternalTaxes"))
+                                c.ImporteImpuestosInternos = excelReader.GetSafeDouble((int)indexes["InternalTaxes"]);
+
+                            if (indexes.ContainsKey("Total"))
+                                c.ImporteTotal = excelReader.GetSafeDouble((int)indexes["Total"]);
+
+                            if (c.Tipo == TipoComprobante.FACTURAS_C || c.Tipo == TipoComprobante.NOTAS_DE_CREDITO_C)
+                            {
+                                c.ImporteNoGravados = 0;
+                                c.CantidadAlicuotasIVA = 0;
+                            }
+                            else
+                                c.CantidadAlicuotasIVA = (ushort)c.Alicuotas.Count;
+
+                            // Verificar si es nota de credito de cualquier tipo...
+
+                            if (c.EsValido)
+                                comprobantes.Add(c);
                         }
                     }
-
-                    if (indexes.ContainsKey("UntaxedNet"))
-                        c.ImporteNoGravados =
-                            excelReader.GetSafeDouble((int) indexes["UntaxedNet"]);
-
-                    if (indexes.ContainsKey("GrossIncome"))
-                    {
-                        foreach (int i in indexes["GrossIncome"])
-                        {
-                            c.ImporteIngresosBrutos += excelReader.GetSafeDouble(i);
-                        }
-                    }
-
-                    if (indexes.ContainsKey("InternalTaxes"))
-                        c.ImporteImpuestosInternos = excelReader.GetSafeDouble((int) indexes["InternalTaxes"]);
-
-                    if (indexes.ContainsKey("Total"))
-                        c.ImporteTotal = excelReader.GetSafeDouble((int) indexes["Total"]);
-
-                    if (c.Tipo == TipoComprobante.FACTURAS_C || c.Tipo == TipoComprobante.NOTAS_DE_CREDITO_C)
-                    {
-                        c.ImporteNoGravados = 0;
-                        c.CantidadAlicuotasIVA = 0;
-                    }
-                    else
-                        c.CantidadAlicuotasIVA = (ushort) c.Alicuotas.Count;
-
-                    // Verificar si es nota de credito de cualquier tipo...
-
-                    if (c.EsValido)
-                        comprobantes.Add(c);
                 }
-
-                excelReader.Close();
 
                 #region Post-process
 
@@ -1354,40 +1356,45 @@ namespace SiAp_Parser
 
             try
             {
-                var excelReader = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).GetExcelDataReader();
-                var dic = new Dictionary<string, int>();
-
-                for (int i = 0; i <= headersIndex; i++)
-                    excelReader.Read();
-
-                for (int i = 0; i <= columnsAmount; i++)
+                using (var fs = File.Open(txtFilepath.Text, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    try
+                    using (var excelReader = ExcelReaderFactory.CreateReader(fs))
                     {
-                        string lec = Regex.Replace(excelReader.GetSafeString(i).ToLower(), @"[.%]", string.Empty).Trim();
+                        var dic = new Dictionary<string, int>();
 
-                        if (string.IsNullOrEmpty(lec) || string.IsNullOrWhiteSpace(lec))
-                            continue;
+                        for (int i = 0; i <= headersIndex; i++)
+                            excelReader.Read();
 
-                        if (lec.IndexOf("fecha") != -1)
-                            dic.Add("Date", i);
-                        else if (lec.IndexOf("tipo") != -1 || lec.IndexOf("tipo de comprobante") != -1)
-                            dic.Add("VoucherType", i);
-                        else if (lec.IndexOf("punto de venta") != -1)
-                            dic.Add("SalesPoint", i);
-                        else if (lec.IndexOf("número") != -1 || lec.IndexOf("numero") != -1 || lec.IndexOf("número de comprobante") != -1 || lec.IndexOf("número de factura") != -1)
-                            dic.Add("VoucherNumber", i);
-                        else if (lec.IndexOf("proveedor") != -1)
-                            dic.Add("SellerName", i);
-                    }
-                    catch
-                    {
-                        continue;
+                        for (int i = 0; i <= columnsAmount; i++)
+                        {
+                            try
+                            {
+                                string lec = Regex.Replace(excelReader.GetSafeString(i).ToLower(), @"[.%]", string.Empty).Trim();
+
+                                if (string.IsNullOrEmpty(lec) || string.IsNullOrWhiteSpace(lec))
+                                    continue;
+
+                                if (lec.IndexOf("fecha") != -1)
+                                    dic.Add("Date", i);
+                                else if (lec.IndexOf("tipo") != -1 || lec.IndexOf("tipo de comprobante") != -1)
+                                    dic.Add("VoucherType", i);
+                                else if (lec.IndexOf("punto de venta") != -1)
+                                    dic.Add("SalesPoint", i);
+                                else if (lec.IndexOf("número") != -1 || lec.IndexOf("numero") != -1 || lec.IndexOf("número de comprobante") != -1 || lec.IndexOf("número de factura") != -1)
+                                    dic.Add("VoucherNumber", i);
+                                else if (lec.IndexOf("proveedor") != -1)
+                                    dic.Add("SellerName", i);
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
+                        }
+
+                        if (cbDate.Checked)
+                            nudDate.Value = dic["Date"];
                     }
                 }
-
-                if (cbDate.Checked)
-                    nudDate.Value = dic["Date"];
             }
             catch (Exception ex)
             {
