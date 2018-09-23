@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using ScrapySharp.Extensions;
-using SiAp_Parser.Enums;
-using SiAp_Parser.Models;
+using SIAP.Parser.Enums;
+using SIAP.Parser.Models;
 
-namespace SiAp_Parser.Helpers
+namespace SIAP.Parser.Helpers
 {
     public static class CuitOnlineHelper
     {

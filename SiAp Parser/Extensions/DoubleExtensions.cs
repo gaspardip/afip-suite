@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SiAp_Parser.Extensions
+namespace SIAP.Parser.Extensions
 {
     public static class DoubleExtensions
     {

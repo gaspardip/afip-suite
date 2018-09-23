@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using SiAp_Parser.Enums;
+using SIAP.Parser.Enums;
 
-namespace SiAp_Parser.Serialization
+namespace SIAP.Parser.Serialization
 {
     [XmlRoot("indexes")]
     public class SalesIndexes : Indexes

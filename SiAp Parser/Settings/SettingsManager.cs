@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
-using SiAp_Parser.Enums;
-using SiAp_Parser.Helpers;
-using SiAp_Parser.Extensions;
+using SIAP.Parser.Extensions;
+using SIAP.Parser.Enums;
+using SIAP.Parser.Helpers;
 
-namespace SiAp_Parser.Settings
+namespace SIAP.Parser.Settings
 {
     public sealed class SettingsManager
     {
         #region Constructors
 
-        public SettingsManager()
+        private SettingsManager()
         {
             PreferencesConfig = new PreferencesConfig();
 
@@ -30,12 +30,6 @@ namespace SiAp_Parser.Settings
             CurrentSettings = new Settings();
         }
 
-        public SettingsManager(bool autoLoad) : this()
-        {
-            if(autoLoad)
-                Load();
-        }
-
         #endregion
 
         /// <summary>
@@ -49,7 +43,8 @@ namespace SiAp_Parser.Settings
         /// </summary>
         public void Load()
         {
-            if (!File.Exists(PreferencesConfig.FilePath)) return;
+            if (!File.Exists(PreferencesConfig.FilePath))
+                return;
 
             try
             {
@@ -68,7 +63,7 @@ namespace SiAp_Parser.Settings
             if (File.Exists(PreferencesConfig.FilePath))
                 previousHash = PreferencesConfig.FilePath.GetFileHash();
 
-            var xml = CurrentSettings.SerializeToXML();
+            string xml = CurrentSettings.SerializeToXML();
 
             try
             {
@@ -85,11 +80,18 @@ namespace SiAp_Parser.Settings
         }
 
         public OutputConfig OutputConfig { get; set; }
+
         public PreferencesConfig PreferencesConfig { get; set; }
+
         public IndexesConfig IndexesConfig { get; set; }
+
         public Settings CurrentSettings { get; set; }
+
         public TiposLibro CurrentBookType { get; set; }
+
         public string CurrentIndexesPath { get; set; }
+
+        public static SettingsManager Instance { get; } = new SettingsManager();
 
         public bool HasUnsavedChanges
         {

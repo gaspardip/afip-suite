@@ -9,27 +9,24 @@ using System.Windows.Forms;
 using ExcelDataReader;
 using Microsoft.VisualBasic;
 using NLog;
-using SiAp_Parser.Enums;
-using SiAp_Parser.Extensions;
-using SiAp_Parser.Helpers;
-using SiAp_Parser.Models;
-using SiAp_Parser.Serialization;
-using SiAp_Parser.Settings;
+using SIAP.Parser.Extensions;
+using SIAP.Parser.Enums;
+using SIAP.Parser.Helpers;
+using SIAP.Parser.Models;
+using SIAP.Parser.Serialization;
+using SIAP.Parser.Settings;
 
-namespace SiAp_Parser
+namespace SIAP.Parser
 {
     public partial class MainForm : Form
     {
-        public Dictionary<string, int> NrosComprobantes { get; }
-        public SettingsManager SettingsManager { get; }
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public MainForm()
         {
             InitializeComponent();
 
-            NrosComprobantes = new Dictionary<string, int>();
-            SettingsManager = new SettingsManager(true);
+            SettingsManager.Instance.Load();
 
             #region ComboBox
 
@@ -40,19 +37,19 @@ namespace SiAp_Parser
 
             #endregion
 
-            if (!SettingsManager.CurrentSettings.LoadLastIndexesUsed.Value)
+            if (!SettingsManager.Instance.CurrentSettings.LoadLastIndexesUsed.Value)
                 return;
 
-            if (!File.Exists(SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value))
+            if (!File.Exists(SettingsManager.Instance.CurrentSettings.LastDocumentSettingsPath.Value))
                 return;
 
             try
             {
-                var ds = SerializationHelpers.Deserialize<DocumentSettings>(SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value);
+                var ds = SerializationHelpers.Deserialize<DocumentSettings>(SettingsManager.Instance.CurrentSettings.LastDocumentSettingsPath.Value);
 
                 RestoreDocumentSettings(ds);
 
-                txtFilepath.Text = SettingsManager.CurrentSettings.LastFileUsedPath.Value;
+                txtFilepath.Text = SettingsManager.Instance.CurrentSettings.LastFileUsedPath.Value;
                 btnProcessFile.Enabled = true;
                 tabCtrlSettings.Visible = true;
             }
@@ -70,13 +67,12 @@ namespace SiAp_Parser
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (SettingsManager.CurrentSettings.SaveOnExit.Value)
-                SettingsManager.Save();
+            SettingsManager.Instance.Save();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (SettingsManager.HasUnsavedChanges && !SettingsManager.CurrentSettings.SaveOnExit.Value)
+            if (SettingsManager.Instance.HasUnsavedChanges)
                 e.Cancel = MessageBox.Show("Tiene cambios sin guardar. ¿Está seguro que quiere salir?", "Alerta", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No;
         }
 
@@ -93,7 +89,7 @@ namespace SiAp_Parser
 
             if (ofd.ShowDialog() != DialogResult.OK) return;
 
-            SettingsManager.CurrentSettings.LastFileUsedPath.Value = ofd.FileName;
+            SettingsManager.Instance.CurrentSettings.LastFileUsedPath.Value = ofd.FileName;
 
             string fileNameToLower = ofd.FileName.ToLower();
 
@@ -110,13 +106,12 @@ namespace SiAp_Parser
 
         private async void btnProcessFile_Click(object sender, EventArgs e)
         {
-            NrosComprobantes.Clear();
             btnProcessFile.Enabled = false;
 
-            SettingsManager.CurrentSettings.LastBookTypeUsed.Value = SettingsManager.CurrentBookType;
-            SettingsManager.CurrentSettings.LastDocumentSettingsPath.Value = SettingsManager.CurrentIndexesPath;
+            SettingsManager.Instance.CurrentSettings.LastBookTypeUsed.Value = SettingsManager.Instance.CurrentBookType;
+            SettingsManager.Instance.CurrentSettings.LastDocumentSettingsPath.Value = SettingsManager.Instance.CurrentIndexesPath;
 
-            var comprobantes = new List<dynamic>();
+            var comprobantes = new List<Comprobante>();
 
             var indexes = new Dictionary<string, dynamic>
             {
@@ -265,7 +260,7 @@ namespace SiAp_Parser
 
             #endregion
 
-            switch (SettingsManager.CurrentBookType)
+            switch (SettingsManager.Instance.CurrentBookType)
             {
                 case TiposLibro.COMPRAS:
                     #region Buys associations
@@ -429,7 +424,7 @@ namespace SiAp_Parser
                             dynamic c = null;
                             Persona p = null;
 
-                            switch (SettingsManager.CurrentBookType)
+                            switch (SettingsManager.Instance.CurrentBookType)
                             {
                                 case TiposLibro.COMPRAS:
                                     c = new ComprobanteCompra();
@@ -480,7 +475,7 @@ namespace SiAp_Parser
                                     {
                                         numbers = strNumbers.Replace(" ", string.Empty).Split('-');
                                     }
-                                    else if (SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
+                                    else if (SettingsManager.Instance.CurrentSettings.GenerateVouchersNumbersIfMissing.Value)
                                     {
                                         // Generate incremental numbers here, but use random for now lol
 
@@ -505,7 +500,7 @@ namespace SiAp_Parser
                                     c.Numero = excelReader.GetInt32((int)indexes["VoucherNumber"]);
                                 }
 
-                                if (SettingsManager.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
+                                if (SettingsManager.Instance.CurrentBookType == TiposLibro.VENTAS && c.NumeroHasta == 0)
                                 {
                                     c.NumeroHasta = c.Numero;
                                 }
@@ -521,7 +516,7 @@ namespace SiAp_Parser
                                 {
                                     if (
                                         string.IsNullOrEmpty(c.Contratante) &&
-                                        SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                        SettingsManager.Instance.CurrentSettings.GetMissingFieldsAutomatically.Value &&
                                         indexes.ContainsKey("SellerNumber"))
                                     {
                                         c.NumeroIdentificacionContratante =
@@ -550,16 +545,20 @@ namespace SiAp_Parser
                                         if (!ValidationHelper.IsValidCuit(c.NumeroIdentificacionContratante))
                                             throw new ArgumentException("Un CUIT no tiene el formato correcto");
                                     }
-                                    catch
+                                    catch (ArgumentException)
                                     {
                                         if (
-                                            SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value &&
+                                            SettingsManager.Instance.CurrentSettings.GetMissingFieldsAutomatically.Value &&
                                             indexes.ContainsKey("SellerName") && !string.IsNullOrEmpty(c.Contratante))
                                         {
                                             p = await CuitOnlineHelper.GetPersonInfo(c.Contratante);
 
                                             if (p != null)
                                                 c.NumeroIdentificacionContratante = p.CUIT;
+                                        }
+                                        else
+                                        {
+                                            throw;
                                         }
                                     }
                                 }
@@ -576,7 +575,7 @@ namespace SiAp_Parser
 
                                     dynamic a = null;
 
-                                    switch (SettingsManager.CurrentBookType)
+                                    switch (SettingsManager.Instance.CurrentBookType)
                                     {
                                         case TiposLibro.COMPRAS:
                                             a = new AlicuotaCompra
@@ -662,80 +661,12 @@ namespace SiAp_Parser
 
                 #region Post-process
 
-                if (SettingsManager.CurrentSettings.ShowResults.Value)
+                var resultsForm = new ResultsForm
                 {
-                    int i = 0;
-                    var resultsForm = new ResultsForm();
+                    Resultado = comprobantes,
+                };
 
-                    foreach (Comprobante c in comprobantes)
-                    {
-                        resultsForm.AddResultsRow(
-                            ++i,
-                            c.Fecha.ToString("MM/dd/yyyy"),
-                            c.Tipo,
-                            c.PuntoDeVenta,
-                            c.Numero,
-                            c.Contratante,
-                            c.NumeroIdentificacionContratante,
-                            c.ImpuestoLiquidadoTotal,
-                            c.ImporteNoGravados,
-                            c.ImporteIngresosBrutos,
-                            c.ImporteTotal
-                        );
-                    }
-
-                    resultsForm.ShowDialog(this);
-                }
-                else
-                {
-                    var logs = GenerateLogFromVoucherList(comprobantes);
-
-                    if (logs == null)
-                        return;
-
-                    if (SettingsManager.CurrentSettings.AutoSaveLogs.Value)
-                    {
-                        SettingsManager.OutputConfig.FileName = "vouchers.txt";
-                        SettingsManager.OutputConfig.FileName = "aliquots.txt";
-                        File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
-                    }
-                    else
-                    {
-                        var sfd = new SaveFileDialog
-                        {
-                            Filter = SettingsManager.OutputConfig.DialogFilter,
-                            Title = SettingsManager.OutputConfig.VouchersSaveFileDialogTitle,
-                            InitialDirectory = SettingsManager.OutputConfig.Directory,
-                            FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "COMPROBANTES", "_", OutputConfig.DefaultFileName, ".txt")
-                        };
-
-                        if (sfd.ShowDialog() != DialogResult.OK)
-                            return;
-
-                        SettingsManager.OutputConfig.FileName = sfd.FileName;
-
-                        File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["vouchers"]["log"]);
-
-                        sfd.Title = SettingsManager.OutputConfig.AliquotsSaveFileDialogTitle;
-                        sfd.InitialDirectory = Directory.GetParent(sfd.FileName).FullName;
-                        sfd.FileName = string.Concat(SettingsManager.CurrentBookType.ToString(), "_", "ALICUOTAS", "_", OutputConfig.DefaultFileName, ".txt");
-
-                        if (sfd.ShowDialog() != DialogResult.OK)
-                            return;
-
-                        SettingsManager.OutputConfig.FileName = sfd.FileName;
-
-                        File.WriteAllText(SettingsManager.OutputConfig.FilePath, logs["aliquots"]["log"]);
-
-                        MessageBox.Show
-                        (
-                            $"{logs["vouchers"]["amount"]} comprobantes generados, {logs["aliquots"]["amount"]} alicuotas generadas",
-                            "Información",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
-                    }
-                }
+                resultsForm.ShowDialog();
 
                 #endregion
             }
@@ -850,10 +781,10 @@ namespace SiAp_Parser
         {
             var sfd = new SaveFileDialog
             {
-                Filter = SettingsManager.IndexesConfig.DialogFilter,
-                Title = SettingsManager.IndexesConfig.SaveFileDialogTitle,
-                InitialDirectory = SettingsManager.IndexesConfig.Directory,
-                FileName = string.Concat(SettingsManager.IndexesConfig.IndexFileDefaultName, "_", SettingsManager.CurrentBookType.ToString())
+                Filter = SettingsManager.Instance.IndexesConfig.DialogFilter,
+                Title = SettingsManager.Instance.IndexesConfig.SaveFileDialogTitle,
+                InitialDirectory = SettingsManager.Instance.IndexesConfig.Directory,
+                FileName = string.Concat(SettingsManager.Instance.IndexesConfig.IndexFileDefaultName, "_", SettingsManager.Instance.CurrentBookType.ToString())
             };
 
 
@@ -891,7 +822,7 @@ namespace SiAp_Parser
                     }
             };
 
-            switch (SettingsManager.CurrentSettings.LastBookTypeUsed.Value)
+            switch (SettingsManager.Instance.CurrentSettings.LastBookTypeUsed.Value)
             {
                 case TiposLibro.COMPRAS:
                     indexes = new BuysIndexes(indexes)
@@ -942,15 +873,15 @@ namespace SiAp_Parser
         {
             var ofd = new OpenFileDialog
             {
-                Filter = SettingsManager.IndexesConfig.DialogFilter,
-                Title = SettingsManager.IndexesConfig.OpenFileDialogTitle,
-                InitialDirectory = SettingsManager.IndexesConfig.Directory
+                Filter = SettingsManager.Instance.IndexesConfig.DialogFilter,
+                Title = SettingsManager.Instance.IndexesConfig.OpenFileDialogTitle,
+                InitialDirectory = SettingsManager.Instance.IndexesConfig.Directory
             };
 
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
 
-            SettingsManager.CurrentIndexesPath = ofd.FileName;
+            SettingsManager.Instance.CurrentIndexesPath = ofd.FileName;
 
             try
             {
@@ -969,7 +900,7 @@ namespace SiAp_Parser
             }
         }
 
-        private int? GenerateIndex(CheckBox cb, NumericUpDown nud)
+        private static int? GenerateIndex(CheckBox cb, NumericUpDown nud)
         {
             if (cb == null || nud == null)
                 return null;
@@ -982,7 +913,7 @@ namespace SiAp_Parser
             return i;
         }
 
-        private List<int> GenerateIndexes(CheckBox cb, TextBox txtBox)
+        private static List<int> GenerateIndexes(CheckBox cb, TextBox txtBox)
         {
             if (cb == null || txtBox == null)
                 return null;
@@ -1210,9 +1141,9 @@ namespace SiAp_Parser
 
         private void cmbTipo_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SettingsManager.CurrentBookType = (TiposLibro)((ComboBoxItem)((ComboBox)sender).SelectedItem).Value;
+            SettingsManager.Instance.CurrentBookType = (TiposLibro)((ComboBoxItem)((ComboBox)sender).SelectedItem).Value;
 
-            switch (SettingsManager.CurrentBookType)
+            switch (SettingsManager.Instance.CurrentBookType)
             {
                 case TiposLibro.COMPRAS:
                     tabSalesIndexes.Enabled = false;
@@ -1265,7 +1196,7 @@ namespace SiAp_Parser
 
         private void opcionesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var of = new OptionsForm(this);
+            var of = new OptionsForm();
             of.ShowDialog();
         }
 
@@ -1276,49 +1207,6 @@ namespace SiAp_Parser
         }
 
         #endregion
-
-        private Dictionary<string, Dictionary<string, string>> GenerateLogFromVoucherList(dynamic list)
-        {
-            if (list == null)
-                return null;
-
-            if (list.Count == 0)
-                return null;
-
-            var vouchersSb = new StringBuilder();
-            var aliquotsSb = new StringBuilder();
-
-            var dic = new Dictionary<string, Dictionary<string, string>>();
-
-            ushort vc = 0;
-            ushort ac = 0;
-
-            foreach (var c in list)
-            {
-                vouchersSb.AppendLine(c.ToString());
-                vc++;
-
-                foreach (var a in c.Alicuotas)
-                {
-                    aliquotsSb.AppendLine(a.ToString());
-                    ac++;
-                }
-            }
-
-            dic["vouchers"] = new Dictionary<string, string>
-            {
-                { "log", vouchersSb.ToString() },
-                { "amount", vc.ToString() }
-            };
-
-            dic["aliquots"] = new Dictionary<string, string>
-            {
-                { "log", aliquotsSb.ToString() },
-                { "amount", ac.ToString() }
-            };
-
-            return dic;
-        }
 
         private void cbAutodetectIndexes_Click(object sender, EventArgs e)
         {

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace SiAp_Parser.Helpers
+namespace SIAP.Parser.Helpers
 {
     public static class ValidationHelper
     {

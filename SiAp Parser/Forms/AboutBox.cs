@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace SiAp_Parser
+namespace SIAP.Parser
 {
     partial class AboutBox : Form
     {

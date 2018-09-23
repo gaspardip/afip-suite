@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace SiAp_Parser.Settings
+namespace SIAP.Parser.Settings
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// http://stackoverflow.com/questions/8745444/c-sharp-generic-constraints-to-include-value-types-and-strings

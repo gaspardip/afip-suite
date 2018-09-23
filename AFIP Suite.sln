@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiAp Parser", "SiAp Parser\SiAp Parser.csproj", "{42FDCF46-33C1-4F11-9AA8-147756D04035}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIAP.Parser", "SiAp Parser\SIAP.Parser.csproj", "{42FDCF46-33C1-4F11-9AA8-147756D04035}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiAp Parser Tests", "SiAp Parser Tests\SiAp Parser Tests.csproj", "{3683BE0E-2A22-4174-9716-9F9D522E1E28}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneradorDeLibros", "GeneradorDeLibros\GeneradorDeLibros.csproj", "{750D1756-CF0B-41BF-9CC3-E3078D17BE72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIAP.Parser.Tests", "SiAp Parser Tests\SIAP.Parser.Tests.csproj", "{3683BE0E-2A22-4174-9716-9F9D522E1E28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +21,11 @@ Global
 		{3683BE0E-2A22-4174-9716-9F9D522E1E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3683BE0E-2A22-4174-9716-9F9D522E1E28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3683BE0E-2A22-4174-9716-9F9D522E1E28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{750D1756-CF0B-41BF-9CC3-E3078D17BE72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{750D1756-CF0B-41BF-9CC3-E3078D17BE72}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{750D1756-CF0B-41BF-9CC3-E3078D17BE72}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{750D1756-CF0B-41BF-9CC3-E3078D17BE72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CD019BE6-F177-41AD-9E75-65FF5C85E118}
 	EndGlobalSection
 EndGlobal

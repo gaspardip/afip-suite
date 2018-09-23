@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SiAp_Parser.Extensions;
-using SiAp_Parser.Enums;
+using SIAP.Parser.Extensions;
+using SIAP.Parser.Enums;
 
-namespace SiAp_Parser.Models
+namespace SIAP.Parser.Models
 {
     public class ComprobanteVenta : Comprobante
     {

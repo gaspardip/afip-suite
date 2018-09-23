@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace SiAp_Parser.Serialization
+namespace SIAP.Parser.Serialization
 {
     public class Index
     {

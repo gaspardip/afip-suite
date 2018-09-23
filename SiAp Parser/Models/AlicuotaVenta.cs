@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using SiAp_Parser.Extensions;
+using SIAP.Parser.Extensions;
 
-namespace SiAp_Parser.Models
+namespace SIAP.Parser.Models
 {
     public class AlicuotaVenta : Alicuota
     {

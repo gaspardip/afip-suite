@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace SiAp_Parser.Settings
+namespace SIAP.Parser.Settings
 {
     public class IndexesConfig
     {

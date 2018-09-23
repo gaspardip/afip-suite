@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 
-namespace SiAp_Parser.Extensions
+namespace SIAP.Parser.Extensions
 {
     public static class StringExtensions
     {

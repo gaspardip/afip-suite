@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace SiAp_Parser.Extensions
+namespace SIAP.Parser.Extensions
 {
     public static class ObjectExtensions
     {

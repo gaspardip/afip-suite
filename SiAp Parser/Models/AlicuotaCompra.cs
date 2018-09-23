@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using SiAp_Parser.Enums;
-using SiAp_Parser.Extensions;
+using SIAP.Parser.Enums;
+using SIAP.Parser.Extensions;
 
-namespace SiAp_Parser
+namespace SIAP.Parser.Models
 {
     public class AlicuotaCompra : Alicuota
     {

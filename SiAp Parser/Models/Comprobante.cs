@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SiAp_Parser.Enums;
+using SIAP.Parser.Enums;
 
-namespace SiAp_Parser.Models
+namespace SIAP.Parser.Models
 {
     public abstract class Comprobante
     {

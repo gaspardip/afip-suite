@@ -2,13 +2,12 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace SiAp_Parser.Settings
+namespace SIAP.Parser.Settings
 {
     public class OutputConfig
     {
         public OutputConfig(string defaultFolder = "Generado")
         {
-            this.DialogFilter = this.DialogFilter = "Archivos de texto|*.txt";
             this.VouchersSaveFileDialogTitle = "Guardar comprobantes";
             this.AliquotsSaveFileDialogTitle = "Guardar alicuotas";
             this.Directory = Path.Combine(Application.StartupPath, defaultFolder);
@@ -27,7 +26,6 @@ namespace SiAp_Parser.Settings
             }
         }
         public string FilePath { get; private set; }
-        public string DialogFilter { get; set; }
         public static string DefaultFileName => DateTime.Now.ToString("yyyyMMddHHmmss");
         public string VouchersSaveFileDialogTitle { get; set; }
         public string AliquotsSaveFileDialogTitle { get; set; }

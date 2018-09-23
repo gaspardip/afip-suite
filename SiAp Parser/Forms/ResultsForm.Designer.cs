@@ -1,4 +1,4 @@
-﻿namespace SiAp_Parser
+﻿namespace SIAP.Parser
 {
     partial class ResultsForm
     {

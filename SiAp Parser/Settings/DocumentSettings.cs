@@ -1,8 +1,8 @@
-﻿using SiAp_Parser.Serialization;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Serialization;
+using SIAP.Parser.Serialization;
 
-namespace SiAp_Parser.Settings
+namespace SIAP.Parser.Settings
 {
     [XmlRoot("documentSettings")]
     [XmlInclude(typeof(BuysIndexes))]

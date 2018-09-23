@@ -1,4 +1,4 @@
-﻿namespace SiAp_Parser.Enums
+﻿namespace SIAP.Parser.Enums
 {
     public enum TipoPersona
     {

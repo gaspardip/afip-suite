@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using SIAP.Parser.Settings;
 
-namespace SiAp_Parser
+namespace SIAP.Parser
 {
     ///  <inheritdoc />
     ///  <summary>
@@ -9,67 +10,44 @@ namespace SiAp_Parser
     ///  http://stackoverflow.com/questions/1665533/communicate-between-two-windows-forms-in-c-sharp
     public partial class OptionsForm : Form
     {
-        private MainForm mainForm;
-
-        public OptionsForm(MainForm f)
+        public OptionsForm()
         {
             InitializeComponent();
 
-            mainForm = f;
-
-            cbValidateRowBasedOnDate.Checked = f.SettingsManager.CurrentSettings.ValidateRowsBasedOnDate.Value;
-            cbGenerateVouchersNumbers.Checked = f.SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value;
-            cbLoadLastPreferences.Checked = f.SettingsManager.CurrentSettings.LoadLastIndexesUsed.Value;
-            cbSaveOptionsOnExit.Checked = f.SettingsManager.CurrentSettings.SaveOnExit.Value;
-            cbShowResults.Checked = f.SettingsManager.CurrentSettings.ShowResults.Value;
-            cbAutoSaveLogs.Checked = f.SettingsManager.CurrentSettings.AutoSaveLogs.Value;
-            cbGetMissingFields.Checked = f.SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value;
+            cbValidateRowBasedOnDate.Checked = SettingsManager.Instance.CurrentSettings.ValidateRowsBasedOnDate.Value;
+            cbGenerateVouchersNumbers.Checked = SettingsManager.Instance.CurrentSettings.GenerateVouchersNumbersIfMissing.Value;
+            cbLoadLastPreferences.Checked = SettingsManager.Instance.CurrentSettings.LoadLastIndexesUsed.Value;
+            cbGetMissingFields.Checked = SettingsManager.Instance.CurrentSettings.GetMissingFieldsAutomatically.Value;
         }
 
         private void cbSettings_CheckedChanged(object sender, EventArgs e)
         {
-            var cb = sender as CheckBox;
-
-            if (cb == null)
+            if (!(sender is CheckBox cb))
                 return;
 
             if (cb != ActiveControl)
                 return;
 
-            var cbIsChecked = cb.Checked;
-
             switch (cb.Name)
             {
                 case "cbValidateRowBasedOnDate":
-                    mainForm.SettingsManager.CurrentSettings.ValidateRowsBasedOnDate.Value = cbIsChecked;
+                    SettingsManager.Instance.CurrentSettings.ValidateRowsBasedOnDate.Value = cb.Checked;
                     break;
                 case "cbGenerateVouchersNumbers":
-                    mainForm.SettingsManager.CurrentSettings.GenerateVouchersNumbersIfMissing.Value = cbIsChecked;
+                    SettingsManager.Instance.CurrentSettings.GenerateVouchersNumbersIfMissing.Value = cb.Checked;
                     break;
                 case "cbLoadLastPreferences":
-                    mainForm.SettingsManager.CurrentSettings.LoadLastIndexesUsed.Value = cbIsChecked;
-                    break;
-                case "cbSaveOptionsOnExit":
-                    btnSaveOptions.Enabled = mainForm.SettingsManager.CurrentSettings.SaveOnExit.Value = cbIsChecked;
-                    break;
-                case "cbShowResults":
-                    mainForm.SettingsManager.CurrentSettings.ShowResults.Value = cbIsChecked;
-                    break;
-                case "cbAutoSaveResults":
-                    mainForm.SettingsManager.CurrentSettings.AutoSaveLogs.Value = cbIsChecked;
+                    SettingsManager.Instance.CurrentSettings.LoadLastIndexesUsed.Value = cb.Checked;
                     break;
                 case "cbGetMissingFields":
-                    mainForm.SettingsManager.CurrentSettings.GetMissingFieldsAutomatically.Value = cbIsChecked;
+                    SettingsManager.Instance.CurrentSettings.GetMissingFieldsAutomatically.Value = cb.Checked;
                     break;
             }
         }
 
-        private void btnSaveOptions_Click(object sender, EventArgs e)
+        private void OptionsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (mainForm.SettingsManager.Save())
-                MessageBox.Show("Opciones guardadas con éxito", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else
-                MessageBox.Show("Ocurrió un error guardando las opciones", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            SettingsManager.Instance.Save();
         }
     }
 }

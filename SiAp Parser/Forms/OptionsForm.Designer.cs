@@ -1,4 +1,4 @@
-﻿namespace SiAp_Parser
+﻿namespace SIAP.Parser
 {
     partial class OptionsForm
     {
@@ -28,26 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.cbSaveOptionsOnExit = new System.Windows.Forms.CheckBox();
             this.cbLoadLastPreferences = new System.Windows.Forms.CheckBox();
             this.cbGenerateVouchersNumbers = new System.Windows.Forms.CheckBox();
             this.cbValidateRowBasedOnDate = new System.Windows.Forms.CheckBox();
-            this.btnSaveOptions = new System.Windows.Forms.Button();
             this.cbShowResults = new System.Windows.Forms.CheckBox();
-            this.cbAutoSaveLogs = new System.Windows.Forms.CheckBox();
             this.cbGetMissingFields = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
-            // 
-            // cbSaveOptionsOnExit
-            // 
-            this.cbSaveOptionsOnExit.AutoSize = true;
-            this.cbSaveOptionsOnExit.Location = new System.Drawing.Point(23, 92);
-            this.cbSaveOptionsOnExit.Name = "cbSaveOptionsOnExit";
-            this.cbSaveOptionsOnExit.Size = new System.Drawing.Size(303, 17);
-            this.cbSaveOptionsOnExit.TabIndex = 8;
-            this.cbSaveOptionsOnExit.Text = "Guardar opciones automaticamente al salir de la aplicación";
-            this.cbSaveOptionsOnExit.UseVisualStyleBackColor = true;
-            this.cbSaveOptionsOnExit.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
             // 
             // cbLoadLastPreferences
             // 
@@ -82,20 +68,10 @@
             this.cbValidateRowBasedOnDate.UseVisualStyleBackColor = true;
             this.cbValidateRowBasedOnDate.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
             // 
-            // btnSaveOptions
-            // 
-            this.btnSaveOptions.Location = new System.Drawing.Point(23, 208);
-            this.btnSaveOptions.Name = "btnSaveOptions";
-            this.btnSaveOptions.Size = new System.Drawing.Size(553, 39);
-            this.btnSaveOptions.TabIndex = 9;
-            this.btnSaveOptions.Text = "Guardar opciones";
-            this.btnSaveOptions.UseVisualStyleBackColor = true;
-            this.btnSaveOptions.Click += new System.EventHandler(this.btnSaveOptions_Click);
-            // 
             // cbShowResults
             // 
             this.cbShowResults.AutoSize = true;
-            this.cbShowResults.Location = new System.Drawing.Point(23, 115);
+            this.cbShowResults.Location = new System.Drawing.Point(23, 91);
             this.cbShowResults.Name = "cbShowResults";
             this.cbShowResults.Size = new System.Drawing.Size(268, 17);
             this.cbShowResults.TabIndex = 8;
@@ -103,21 +79,10 @@
             this.cbShowResults.UseVisualStyleBackColor = true;
             this.cbShowResults.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
             // 
-            // cbAutoSaveLogs
-            // 
-            this.cbAutoSaveLogs.AutoSize = true;
-            this.cbAutoSaveLogs.Location = new System.Drawing.Point(22, 138);
-            this.cbAutoSaveLogs.Name = "cbAutoSaveLogs";
-            this.cbAutoSaveLogs.Size = new System.Drawing.Size(278, 17);
-            this.cbAutoSaveLogs.TabIndex = 8;
-            this.cbAutoSaveLogs.Text = "Guardar los documentos generados automaticamente";
-            this.cbAutoSaveLogs.UseVisualStyleBackColor = true;
-            this.cbAutoSaveLogs.CheckedChanged += new System.EventHandler(this.cbSettings_CheckedChanged);
-            // 
             // cbGetMissingFields
             // 
             this.cbGetMissingFields.AutoSize = true;
-            this.cbGetMissingFields.Location = new System.Drawing.Point(22, 161);
+            this.cbGetMissingFields.Location = new System.Drawing.Point(22, 114);
             this.cbGetMissingFields.Name = "cbGetMissingFields";
             this.cbGetMissingFields.Size = new System.Drawing.Size(356, 17);
             this.cbGetMissingFields.TabIndex = 8;
@@ -129,12 +94,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 267);
-            this.Controls.Add(this.btnSaveOptions);
+            this.ClientSize = new System.Drawing.Size(588, 152);
             this.Controls.Add(this.cbGetMissingFields);
-            this.Controls.Add(this.cbAutoSaveLogs);
             this.Controls.Add(this.cbShowResults);
-            this.Controls.Add(this.cbSaveOptionsOnExit);
             this.Controls.Add(this.cbLoadLastPreferences);
             this.Controls.Add(this.cbGenerateVouchersNumbers);
             this.Controls.Add(this.cbValidateRowBasedOnDate);
@@ -142,20 +104,17 @@
             this.Name = "OptionsForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Editar opciones";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OptionsForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.CheckBox cbSaveOptionsOnExit;
         private System.Windows.Forms.CheckBox cbLoadLastPreferences;
         private System.Windows.Forms.CheckBox cbGenerateVouchersNumbers;
         private System.Windows.Forms.CheckBox cbValidateRowBasedOnDate;
-        private System.Windows.Forms.Button btnSaveOptions;
         private System.Windows.Forms.CheckBox cbShowResults;
-        private System.Windows.Forms.CheckBox cbAutoSaveLogs;
         private System.Windows.Forms.CheckBox cbGetMissingFields;
     }
 }

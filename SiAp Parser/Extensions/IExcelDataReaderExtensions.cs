@@ -1,6 +1,6 @@
 ﻿using ExcelDataReader;
 
-namespace SiAp_Parser.Extensions
+namespace SIAP.Parser.Extensions
 {
     public static class IExcelDataReaderExtensions
     {

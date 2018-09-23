@@ -1,9 +1,9 @@
-﻿using SiAp_Parser.Enums;
-using System;
+﻿using System;
 using System.Text;
 using System.Xml.Serialization;
+using SIAP.Parser.Enums;
 
-namespace SiAp_Parser.Settings
+namespace SIAP.Parser.Settings
 {
     [Serializable]
     [XmlRoot("settings")]
@@ -19,10 +19,7 @@ namespace SiAp_Parser.Settings
             LoadLastIndexesUsed = new Setting<bool>(false);
             LastDocumentSettingsPath = new Setting<string>(string.Empty);
             LastBookTypeUsed = new Setting<TiposLibro>(TiposLibro.UNDEFINED);
-            SaveOnExit = new Setting<bool>(true);
-            ShowResults = new Setting<bool>(false);
             OutputPath = new Setting<string>(string.Empty);
-            AutoSaveLogs = new Setting<bool>(true);
             LastFileUsedPath = new Setting<string>(string.Empty);
             GetMissingFieldsAutomatically = new Setting<bool>(true);
         }
@@ -40,10 +37,7 @@ namespace SiAp_Parser.Settings
                 LoadLastIndexesUsed.Value == s.LoadLastIndexesUsed.Value &&
                 LastDocumentSettingsPath.Value == s.LastDocumentSettingsPath.Value &&
                 LastBookTypeUsed.Value == s.LastBookTypeUsed.Value &&
-                SaveOnExit.Value == s.SaveOnExit.Value &&
-                ShowResults.Value == s.ShowResults.Value &&
                 OutputPath.Value == s.OutputPath.Value &&
-                AutoSaveLogs.Value == s.AutoSaveLogs.Value &&
                 GetMissingFieldsAutomatically.Value == s.GetMissingFieldsAutomatically.Value;
         }
 
@@ -58,8 +52,6 @@ namespace SiAp_Parser.Settings
             sb.AppendLine($"LoadLastIndexesUsed: {LoadLastIndexesUsed}");
             sb.AppendLine($"LastIndexesUsedPath: {LastDocumentSettingsPath}");
             sb.AppendLine($"LastBookTypeUsed: {LastBookTypeUsed}");
-            sb.AppendLine($"SaveOnExit: {SaveOnExit}");
-            sb.AppendLine($"ShowResults: {ShowResults}");
             sb.AppendLine($"OutputPath: {OutputPath}");
             sb.AppendLine($"OutputPath: {GetMissingFieldsAutomatically}");
 
@@ -76,12 +68,6 @@ namespace SiAp_Parser.Settings
         public Setting<string> LastDocumentSettingsPath { get; set; }
         [XmlElement("lastBookTypeUsed")]
         public Setting<TiposLibro> LastBookTypeUsed { get; set; }
-        [XmlElement("saveOnExit")]
-        public Setting<bool> SaveOnExit { get; set; }
-        [XmlElement("showResults")]
-        public Setting<bool> ShowResults { get; set; }
-        [XmlElement("autoSaveLogs")]
-        public Setting<bool> AutoSaveLogs { get; set; }
         [XmlElement("outputPath")]
         public Setting<string> OutputPath { get; set; }
         [XmlElement("lastFileUsedPath")]

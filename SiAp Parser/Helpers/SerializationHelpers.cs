@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace SiAp_Parser.Helpers
+namespace SIAP.Parser.Helpers
 {
     // http://stackoverflow.com/questions/4996876/generic-deserialization-of-an-xml-string
     // http://stackoverflow.com/questions/9645349/getting-invalidoperationexception-when-deserializing-in-c-sharp

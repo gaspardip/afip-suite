@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SiAp_Parser.Extensions;
-using SiAp_Parser.Enums;
+using SIAP.Parser.Enums;
+using SIAP.Parser.Extensions;
 
-namespace SiAp_Parser.Models
+namespace SIAP.Parser.Models
 {
     public class ComprobanteCompra : Comprobante
     {
@@ -18,17 +18,6 @@ namespace SiAp_Parser.Models
             DenominacionEmisor = string.Empty;
             IVAComision = 0;
             Alicuotas = new List<AlicuotaCompra>();
-        }
-
-        public ComprobanteCompra(ComprobanteCompra c) : base(c)
-        {
-            DespachoImportacion = c.DespachoImportacion;
-            ImportePercepcionesIVA = c.ImportePercepcionesIVA;
-            CreditoFiscalComputable = c.CreditoFiscalComputable;
-            CUITEmisor = c.CUITEmisor;
-            DenominacionEmisor = c.DenominacionEmisor;
-            IVAComision = c.IVAComision;
-            Alicuotas = c.Alicuotas;
         }
 
         public new bool EsValido => VerificarValidez();

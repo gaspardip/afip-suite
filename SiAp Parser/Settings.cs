@@ -1,4 +1,4 @@
-﻿namespace SiAp_Parser.Properties {
+﻿namespace SIAP.Parser.Properties {
 
 
     // Esta clase le permite controlar eventos específicos en la clase de configuración:
