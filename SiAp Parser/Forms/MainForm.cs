@@ -543,7 +543,7 @@ namespace SIAP.Parser
                                             excelReader.GetSafeString((int)indexes["SellerNumber"]).Trim();
 
                                         if (!ValidationHelper.IsValidCuit(c.NumeroIdentificacionContratante))
-                                            throw new ArgumentException("Un CUIT no tiene el formato correcto");
+                                            throw new ArgumentException($"Un CUIT no tiene el formato correcto: {c.NumeroIdentificacionContratante}");
                                     }
                                     catch (ArgumentException)
                                     {
@@ -660,6 +660,14 @@ namespace SIAP.Parser
                 }
 
                 #region Post-process
+
+                var duplicates = comprobantes
+                    .Select(x => string.Concat(x.PuntoDeVenta, x.Numero))
+                    .GroupBy(x => x)
+                    .Where(g => g.Count() > 1);
+
+                if (duplicates.Any())
+                    throw new Exception($"Hay comprobantes duplicados: {string.Join(", ", duplicates.SelectMany(g => g))}");
 
                 var resultsForm = new ResultsForm
                 {
