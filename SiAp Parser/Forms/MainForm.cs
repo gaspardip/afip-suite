@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ExcelDataReader;
 using Microsoft.VisualBasic;
 using NLog;
-using SIAP.Parser.Extensions;
 using SIAP.Parser.Enums;
+using SIAP.Parser.Extensions;
 using SIAP.Parser.Helpers;
 using SIAP.Parser.Models;
 using SIAP.Parser.Serialization;
@@ -664,7 +663,8 @@ namespace SIAP.Parser
                 var duplicates = comprobantes
                     .Select(x => string.Concat(x.PuntoDeVenta, x.Numero))
                     .GroupBy(x => x)
-                    .Where(g => g.Count() > 1);
+                    .Where(g => g.Count() > 1)
+                    .ToList();
 
                 if (duplicates.Any())
                     throw new Exception($"Hay comprobantes duplicados: {string.Join(", ", duplicates.SelectMany(g => g))}");
